@@ -3,7 +3,7 @@ const router = express.Router();
 const Item = require('../models/item');
 const auth = require('../middleware/auth');
 
-router.get('/', auth, async, (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const items = await Item.find();
     res.json(items);
