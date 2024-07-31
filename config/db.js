@@ -5,7 +5,6 @@ const connectDB = async () => {
     await mongoose.connect('mongodb://localhost:27017/Warehouseapp', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true
     });
     console.log('MongoDB connected...');
   } catch (err) {
