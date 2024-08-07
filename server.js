@@ -6,6 +6,8 @@ connectDB();
 
 app.use(express.json());
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/items', require('./routes/itemRoutes'));
 app.use('/api/partner', require('./routes/partnerRoutes'));
