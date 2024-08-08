@@ -1,14 +1,13 @@
 const mongoose = require('mongoose');
-
 const connectDB = async () => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/Warehouseapp', {
+    await mongoose.connect('mongodb://localhost:27017/WarehouseApp', {
       useNewUrlParser: true,
-      useUnifiedTopology: true,
+      useUnifiedTopology: true
     });
-    console.log('MongoDB connected...');
-  } catch (err) {
-    console.error(err.message);
+    console.log('MongoDB connected');
+  } catch (error) {
+    console.error(error.message);
     process.exit(1);
   }
 };
