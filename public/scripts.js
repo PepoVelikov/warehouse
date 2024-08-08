@@ -1,10 +1,56 @@
 document.addEventListener('DOMContentLoaded', () => {
   const registerForm = document.getElementById('registerForm');
   const loginForm = document.getElementById('loginForm');
+  const registerContainer = document.getElementById('registerContainer');
+  const showRegisterLink = document.getElementById('showRegister');
+  const showLoginLink = document.getElementById('showLogin');
+
+  if (showRegisterLink) {
+    showRegisterLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelector('.container').style.display = 'none';
+      registerContainer.style.display = 'block';
+    });
+  }
+
+  if (showLoginLink) {  
+    showLoginLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelector('.container').style.display = 'block';
+      registerContainer.style.display = 'none';
+    });
+  }
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('/api/users/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          alert(data.message || 'Login successful');
+          localStorage.setItem('token', data.token);
+          window.location.href = 'dashboard.html';
+        } else {
+          alert(data.message || 'Login failed');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Login failed');
+      }
+    });
+  }
 
   if (registerForm) {
-    registerForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
       const name = document.getElementById('name').value;
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
@@ -29,31 +75,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 }
-
-  if (loginForm) {
-    loginForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-
-      try {
-        const response = await fetch('/api/users/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await response.json();
-        if (response.ok) {
-          alert(data.message || 'Login successful');
-          localStorage.setItem('token', data.token);
-          window.location.href = 'index.html';
-        } else {
-          alert(data.message || 'Login failed');
-        } 
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Login failed');
-      } 
-    });
-  }
 });
