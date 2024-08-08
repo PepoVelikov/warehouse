@@ -7,14 +7,17 @@ const jwt = require('jsonwebtoken');
 router.post('/register', async (req, res) => {
   const { name, password, email } = req.body;
   try {
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ name });
     if (user) {
       return res.status(400).json({ message: 'User already exists' });
     }
     User = new User({ name, password, email });
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
     await user.save();
     const payload = { user: { id: user.id }};
     jwt.sign(payload, 'yourJWTSecret', { expireIn: 360000 }, (err, token) => {
+      if (err) throw err;
       res.json({ token });
     });
   } catch (error) {
@@ -24,9 +27,9 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { name, password } = req.body;
   try {
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ name });
     if (!user) {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
