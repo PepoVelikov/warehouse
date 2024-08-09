@@ -34,18 +34,24 @@ router.post('/login', async (req, res) => {
   try {
     let user = await User.findOne({ name });
     if (!user) {
+      console.log('Invalid credentials: User not found');
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.log('Invalid credentials: Password mismatch');
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
     const payload = { user: { id: user.id }};
     jwt.sign(payload, 'yourJWTSecret', { expiresIn: 360000 }, (err, token) => {
-      if (err) throw err;
-      res.status(200).json({ token });
-      });
-  } catch (error) {
+      if (err) {
+      console.log('Error generating token:', err);
+      throw err;
+    }
+    console.log('Login successful, token generated');
+    res.status(200).json({ token });
+  });
+} catch (error) {
     console.error('Error logging in user:', error.message);
     res.status(500).json({ msg: 'Server error' });
   }
