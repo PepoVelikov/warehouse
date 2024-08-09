@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (error) {
         console.error('Error:', error);
-        alert('Login failed');
+        alert('An error occurred during login');
       }
     });
   }
@@ -62,16 +62,17 @@ document.addEventListener('DOMContentLoaded', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, email, password, confirmPassword })
         });
+
         const data = await response.json();
         if (response.ok) {
-          alert(data.message || 'Registration successful');
+          alert('Registration successful');
           window.location.href = 'login.html';
       } else {
         alert(data.message || 'Registration failed');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Registration failed');
+      alert('An error occurred during registration');
     }
   });
 }
