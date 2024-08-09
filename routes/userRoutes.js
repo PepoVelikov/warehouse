@@ -43,12 +43,12 @@ router.post('/login', async (req, res) => {
     const payload = { user: { id: user.id }};
     jwt.sign(payload, 'yourJWTSecret', { expiresIn: 360000 }, (err, token) => {
       if (err) throw err;
-      res.json({ token });
+      res.status(200).json({ token });
       });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+  } catch (error) {
+    console.error('Error logging in user:', err.message);
+    res.status(500).json({ msg: 'Server error' });
   }
-    });
+});
 
 module.exports = router;
