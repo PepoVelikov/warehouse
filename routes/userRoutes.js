@@ -5,15 +5,15 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 router.post('/register', async (req, res) => {
-  const { name, password, email } = req.body;
-  console.log('Received registration request:', { name, password, email });
+  const { name, email, password } = req.body;
+  console.log('Received registration request:', { name, email, password });
   try {
     let user = await User.findOne({ name });
     if (user) {
       console.log('User already exists');
       return res.status(400).json({ msg: 'User already exists' });
     }
-    user = new User({ name, password, email });
+    user = new User({ name, email, password });
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
     await user.save();
