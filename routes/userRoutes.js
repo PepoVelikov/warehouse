@@ -11,7 +11,7 @@ router.post('/register', async (req, res) => {
     let user = await User.findOne({ name });
     if (user) {
       console.log('User already exists');
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ msg: 'User already exists' });
     }
     user = new User({ name, password, email });
     const salt = await bcrypt.genSalt(10);
@@ -19,13 +19,13 @@ router.post('/register', async (req, res) => {
     await user.save();
     console.log('User registered successfully:', user);
     const payload = { user: { id: user.id }};
-    jwt.sign(payload, 'yourJWTSecret', { expireIn: 360000 }, (err, token) => {
+    jwt.sign(payload, 'yourJWTSecret', { expiresIn: 360000 }, (err, token) => {
       if (err) throw err;
       res.json({ token });
     });
   } catch (error) {
     console.error('Error registering user:', error.message);
-    res.status(500).send('Server error');
+    res.status(500).send({ msg: 'Server error' });
   }
 });
 
