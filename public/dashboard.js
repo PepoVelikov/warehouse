@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
       partnersList.innerHTML = '';
       partners.forEach((partner) => {
         const li = document.createElement('li');
-        li.textContent = `${partner.name} - ${partner.bulstat} - ${partner.address} - ${partner.phone} - ${partner.email}`;
+        li.textContent = `${partner.name} - ${partner.bulstat} - ${partner.address} - ${partner.phoneNumber} - ${partner.email}`;
         partnersList.appendChild(li);
       });
     } catch (error) {
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch('/api/partners', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-        body: JSON.stringify({ name, bulstat, address, phone, email }) 
+        body: JSON.stringify({ name, bulstat, address, phoneNumber, email }) 
       });
       const newPartner = await response.json();
       if (response.ok) {
