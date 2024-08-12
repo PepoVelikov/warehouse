@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const name = document.getElementById('partnerName').value;
     const bulstat = document.getElementById('partnerBulstat').value;
     const address = document.getElementById('partnerAddress').value;
-    const phone = document.getElementById('partnerPhone').value;
+    const phoneNumber = document.getElementById('partnerPhone').value;
     const email = document.getElementById('partnerEmail').value;
     
     try {
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const newPartner = await response.json();
       if (response.ok) {
         const li = document.createElement('li');
-        li.textContent = `${newPartner.name} - ${newPartner.bulstat} - ${newPartner.address} - ${newPartner.phone} - ${newPartner.email}`;
+        li.textContent = `${newPartner.name} - ${newPartner.bulstat} - ${newPartner.address} - ${newPartner.phoneNumber} - ${newPartner.email}`;
         partnersList.appendChild(li);
         addPartnerForm.reset();
         fetchPartners();
