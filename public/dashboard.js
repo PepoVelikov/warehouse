@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('An error occurred while fetching dashboard data');
     });
   }
-});
 
   const logoutButton = document.getElementById('logoutButton');
   if (logoutButton) {
@@ -26,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = 'login.html';
     });
   }
+
   const itemList = document.getElementById('itemList');
   const addItemForm = document.getElementById('addItemForm');
   const partnersList = document.getElementById('partnersList');
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
       partnersList.innerHTML = '';
       partners.forEach((partner) => {
         const li = document.createElement('li');
-        li.textContent = `${partner.name} - ${partner.bulstat} - ${partner.addres} - ${partner.phone} - ${partner.email}`;
+        li.textContent = `${partner.name} - ${partner.bulstat} - ${partner.address} - ${partner.phone} - ${partner.email}`;
         partnersList.appendChild(li);
       });
     } catch (error) {
@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         li.textContent = `${newItem.name} - ${newItem.unit} - ${newItem.quantity} - ${newItem.price} BGN`;
         itemList.appendChild(li);
         addItemForm.reset();
+        fetchItems();
       } else {
         alert('Error adding item');
       }
@@ -109,9 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const newPartner = await response.json();
       if (response.ok) {
         const li = document.createElement('li');
-        li.textContent = `${newPartner.name} - ${newPartner.bulstat} - ${newPartner.addres} - ${newPartner.phone} - ${newPartner.email}`;
+        li.textContent = `${newPartner.name} - ${newPartner.bulstat} - ${newPartner.address} - ${newPartner.phone} - ${newPartner.email}`;
         partnersList.appendChild(li);
         addPartnerForm.reset();
+        fetchPartners();
       } else {
         alert('Error adding partner', error);
       } 
