@@ -1,20 +1,35 @@
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
+  
   if (!token) {
-    window.location.href = 'index.html';
-    return;
+    window.location.href = 'login.html';
+  } else {
+    fetch('/api/dashboard', {
+      method: 'GET',
+      headers: { 'x-auth-token': token }
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Dashboard data:', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert('An error occurred while fetching dashboard data');
+    });
   }
+});
 
   const logoutButton = document.getElementById('logoutButton');
+  if (logoutButton) {
+    logoutButton.addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    });
+  }
   const itemList = document.getElementById('itemList');
   const addItemForm = document.getElementById('addItemForm');
   const partnersList = document.getElementById('partnersList');
   const addPartnerForm = document.getElementById('addPartnerForm');
-
-  logoutButton.addEventListener('click', () => {
-    localStorage.removeItem('token');
-    window.location.href = 'index.html';
-  });
 
   const fetchItems = async () => {
     try {
