@@ -16,7 +16,7 @@ router.post('/', auth, async (req, res) => {
   const partner = new Partner({
     name: req.body.name,
     bulstat: req.body.bulstat,
-    addres: req.body.addres,
+    addres: req.body.address,
     phone: req.body.phone,
     email: req.body.email
   });
