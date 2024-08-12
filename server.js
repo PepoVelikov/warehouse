@@ -19,7 +19,7 @@ app.use('/api/dashboard', (req, res) => {
 
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/items', require('./routes/itemRoutes'));
-app.use('/api/partner', require('./routes/partnerRoutes'));
+app.use('/api/partners', require('./routes/partnerRoutes'));
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
