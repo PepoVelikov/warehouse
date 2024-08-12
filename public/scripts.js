@@ -48,8 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const data = await response.json();
+        console.log('Response data:', data);
+
         if (response.ok) {
-          alert('Login successful');
+          console.log('Login successful, redirecting to dashboard...');
           localStorage.setItem('token', data.token);
           window.location.href = 'dashboard.html';
         } else {
