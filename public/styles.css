@@ -60,3 +60,21 @@ p {
 a {
   color: #007bff;
 }
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.nav button {
+  margin-right: 10px;
+}
+
+.section, .sub-section {
+  margin-top: 20px;
+}
+
+button {
+  margin-bottom: 10px;
+}
