@@ -7,58 +7,70 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome</h1>`
-    <button id="logoutButton">Logout</button>
+  <div class="dashboard">
+    <div class="nav">
+      <button onclick="showSection('items')">Items</button>
+      <button onclick="showSection('partners')">Partners</button>
+      <button onclick="showSection('documents')">Documents</button>
+    </div>
+    
+  <div id="itemsSection" class="section">
     <h2>Items</h2>
-    <ul id="itemList"></ul>
-    <h2>Add New Items</h2>
+    <ul id="itemsList"></ul>
     <form id="addItemForm">
-      <div>
-        <label for="itemName">Name:</label>
-        <input type="text" id="itemName" name="name" required>
-      </div>
-      <div>
-        <label for="itemUnit">Unit:</label>
-        <input type="text" id="itemUnit" name="unit" required>
-      </div>
-      <div>
-        <label for="itemQuantity">Quantity:</label>
-        <input type="number" id="itemQuantity" name="quantity" required>
-      </div>
-      <div>
-        <label for="itemPrice">Price:</label>
-        <input type="number" id="price" name="price" required>
-      </div>
+      <input type="text" id="itemName" name="itemName" placeholder="Name">
+      <input type="text" id="itemUnit" name="itemUnit" placeholder="Unit">
+      <input type="number" id="itemQuantity" name="itemQuantity" placeholder="Quantity">
+      <input type="number" id="itemPrice" name="itemPrice" placeholder="Price">
       <button type="submit">Add Item</button>
     </form>
+  </div>
+
+  <div id="partnersSection" class="section" style="display: none;">
     <h2>Partners</h2>
     <ul id="partnersList"></ul>
-    <h2>Add New Partner</h2>
     <form id="addPartnerForm">
-      <div>
-        <label for="partnerName">Name:</label>
-        <input type="text" id="partnerName" name="name" required>
-      </div>
-      <div>
-        <label for="partnerBulstat">Bulstat:</label>
-        <input type="text" id="partnerBulstat" name="bulstat" required>
-      </div>
-      <div>
-        <label for="partnerPhone">Phone:</label>
-        <input type="text" id="partnerPhone" name="phoneNumber" required>
-      </div>
-      <div>
-        <label for="partnerAddress">Address:</label>
-        <input type="text" id="partnerAddress" name="address" required>
-      </div>
-      <div>
-        <label for="partnerEmail">Email:</label>
-        <input type="email" id="partnerEmail" name="email" required>
-      </div>
+      <input type="text" id="partnerName" name="partnerName" placeholder="Name">
+      <input type="text" id="partnerBulstat" name="partnerBulstat" placeholder="Bulstat">
+      <input type="text" id="partnerAddress" name="partnerAddress" placeholder="Address">
+      <input type="text" id="partnerEmail" name="partnerEmail" placeholder="Email">
+      <input type="text" id="partnerPhone" name="partnerPhone" placeholder="Phone">
       <button type="submit">Add Partner</button>
     </form>
   </div>
+
+  <div id="documentsSection" class="section" style="display: none;">
+    <h2>Documents</h2>
+    <button onclick="showSubSection('sales')">Sales</button>
+    <button onclick="showSubSection('purchases')">Purchases</button>
+
+    <div id="salesSection" class="sub-section" style="display: none;">
+      <h3>Sales</h3>
+      <ul id="salesList"></ul>
+      <form id="addSalesForm">
+        <input type="text" id="salesName" name="salesName" placeholder="Name">
+        <input type="text" id="salesBulstat" name="salesBulstat" placeholder="Bulstat">
+        <input type="text" id="salesAddress" name="salesAddress" placeholder="Address">
+        <input type="text" id="salesEmail" name="salesEmail" placeholder="Email">
+        <input type="text" id="salesPhone" name="salesPhone" placeholder="Phone">
+        <button type="submit">Add Sales</button>
+      </form>
+    </div>
+
+    <div id="purchasesSection" class="sub-section" style="display: none;">
+      <h3>Purchases</h3>
+      <ul id="purchasesList"></ul>
+      <form id="addPurchasesForm">
+        <input type="text" id="purchasesName" name="purchasesName" placeholder="Name">
+        <input type="text" id="purchasesBulstat" name="purchasesBulstat" placeholder="Bulstat">
+        <input type="text" id="purchasesAddress" name="purchasesAddress" placeholder="Address">
+        <input type="text" id="purchasesEmail" name="purchasesEmail" placeholder="Email">
+        <input type="text" id="purchasesPhone" name="purchasesPhone" placeholder="Phone">
+        <button type="submit">Add Purchases</button>
+      </form>
+    </div>
+  </div>
+
   <script src="dashboard.js"></script>
 </body>
 </html>
