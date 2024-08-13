@@ -7,16 +7,29 @@ function showSection(section) {
   document.getElementById(section + 'Section').style.display = 'block';
 }
 
-function hideAllSubSections() {
-  document.querySelectorAll('.sub-section').forEach(sub => subSec.style.display = 'none');
+function hideAllSubsections() {
+  document.querySelectorAll('.sub-section').forEach(subSec => sec.style.display = 'none');
 }
 
-function showSubSection(subSection) {
-  hideAllSubSections();
-  document.getElementById(subSection + 'Section').style.display = 'block';
+function showSubsection(subsection) {
+  hideAllSubsections();
+  document.getElementById(subsection + 'Section').style.display = 'block';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  hideAllSubsections();
+
+  hideAllSections();
+
+  const logoutButton = document.getElementById('logoutButton');
+  if (logoutButton) {
+    logoutButton.addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    });
+  }
+
   const token = localStorage.getItem('token');
   
   if (!token) {
