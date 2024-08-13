@@ -1,3 +1,13 @@
+function showSection(section) {
+  document.querySelectorAll('.section').forEach(sec => sec.computedStyleMap.display = 'none');
+  document.getElementById(section + 'Section').style.display = 'block';
+}
+
+function showSubSection(subSection) {
+  document.querySelectorAll('.sub-section').forEach(sub => sub.style.display = 'none');
+  document.getElementById(subSection + 'Section').style.display = 'block';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
   
@@ -26,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const itemList = document.getElementById('itemList');
+  const itemsList = document.getElementById('itemsList');
   const addItemForm = document.getElementById('addItemForm');
   const partnersList = document.getElementById('partnersList');
   const addPartnerForm = document.getElementById('addPartnerForm');
@@ -37,11 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'x-auth-token': token }
       });
       const items = await response.json();
-      itemList.innerHTML = '';
+      itemsList.innerHTML = '';
       items.forEach((item) => {
         const li = document.createElement('li');
         li.textContent = `${item.name} - ${item.unit} - ${item.quantity} - ${item.price} BGN`;
-        itemList.appendChild(li);
+        itemsList.appendChild(li);
       });
     } catch (error) {
       console.error('Error fetching items:', error);
@@ -82,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (response.ok) {
         const li = document.createElement('li');
         li.textContent = `${newItem.name} - ${newItem.unit} - ${newItem.quantity} - ${newItem.price} BGN`;
-        itemList.appendChild(li);
+        itemsList.appendChild(li);
         addItemForm.reset();
         fetchItems();
       } else {
