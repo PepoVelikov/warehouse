@@ -1,10 +1,18 @@
+function hideAllSections() {
+  document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+}
+
 function showSection(section) {
-  document.querySelectorAll('.section').forEach(sec => sec.computedStyleMap.display = 'none');
+  hideAllSections();
   document.getElementById(section + 'Section').style.display = 'block';
 }
 
+function hideAllSubSections() {
+  document.querySelectorAll('.sub-section').forEach(sub => subSec.style.display = 'none');
+}
+
 function showSubSection(subSection) {
-  document.querySelectorAll('.sub-section').forEach(sub => sub.style.display = 'none');
+  hideAllSubSections();
   document.getElementById(subSection + 'Section').style.display = 'block';
 }
 
