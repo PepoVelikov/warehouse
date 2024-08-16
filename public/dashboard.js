@@ -8,7 +8,7 @@ function showSection(section) {
 }
 
 function hideAllSubsections() {
-  document.querySelectorAll('.sub-section').forEach(subSec => sec.style.display = 'none');
+  document.querySelectorAll('.sub-section').forEach(subSec => subSec.style.display = 'none');
 }
 
 function showSubsection(subsection) {
@@ -16,13 +16,12 @@ function showSubsection(subsection) {
   document.getElementById(subsection + 'Section').style.display = 'block';
 }
 
+hideAllSubsections();
+
+hideAllSections();
+
 document.addEventListener('DOMContentLoaded', () => {
-
-  hideAllSubsections();
-
-  hideAllSections();
-
-  const Logout = document.getElementById('logoutButton');
+  const logoutButton = document.getElementById('logoutButton');
   if (logoutButton) {
     logoutButton.addEventListener('click', () => {
       localStorage.removeItem('token');
@@ -46,14 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch((error) => {
       console.error('Error:', error);
       alert('An error occurred while fetching dashboard data');
-    });
-  }
-
-  const logoutButton = document.getElementById('logoutButton');
-  if (logoutButton) {
-    logoutButton.addEventListener('click', () => {
-      localStorage.removeItem('token');
-      window.location.href = 'login.html';
     });
   }
 
