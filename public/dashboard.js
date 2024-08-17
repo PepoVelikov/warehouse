@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const token = localStorage.getItem('token');
-  
+
   if (!token) {
     window.location.href = 'login.html';
   } else {
@@ -38,14 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'GET',
       headers: { 'x-auth-token': token }
     })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log('Dashboard data:', data);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      alert('An error occurred while fetching dashboard data');
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Dashboard data:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('An error occurred while fetching dashboard data');
+      });
   }
 
   const itemsList = document.getElementById('itemsList');
@@ -93,8 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const unit = document.getElementById('itemUnit').value;
     const quantity = document.getElementById('itemQuantity').value;
     const price = document.getElementById('price').value;
-    
-    try { 
+
+    try {
       const response = await fetch('/api/items', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
@@ -122,12 +122,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const address = document.getElementById('partnerAddress').value;
     const phoneNumber = document.getElementById('partnerPhone').value;
     const email = document.getElementById('partnerEmail').value;
-    
+
     try {
       const response = await fetch('/api/partners', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-        body: JSON.stringify({ name, bulstat, address, phoneNumber, email }) 
+        body: JSON.stringify({ name, bulstat, address, phoneNumber, email })
       });
       const newPartner = await response.json();
       if (response.ok) {
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchPartners();
       } else {
         alert('Error adding partner', error);
-      } 
+      }
     } catch (error) {
       console.error('Error adding partner:', error);
     }
@@ -146,4 +146,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetchItems();
   fetchPartners();
+
+  const salesForm = document.getElementById('salesForm');
+  const purchasesForm = document.getElementById('purchasesForm');
+
+  salesForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const itemId = document.getElementById('salesItemId').value;
+    const quantity = document.getElementById('saleQuantity').value;
+
+    try {
+      const response = await fetch('/api/sales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+        body: JSON.stringify({ itemId, quantity })
+      });
+      const result = await response.json();
+      if (response.ok) {
+        alert('Sale successfully');
+        fetchItems();
+      } else {
+        alert('Error selling item' + result.message);
+      }
+    } catch (error) {
+      console.error('Error selling item:', error);
+    }
+  });
+
+  purchasesForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const itemId = document.getElementById('purchaseItemId').value;
+    const quantity = document.getElementById('purchaseQuantity').value;
+
+    try {
+      const response = await fetch('/api/purchases', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+        body: JSON.stringify({ itemId, quantity })
+      });
+      const result = await response.json();
+      if (response.ok) {
+        alert('Purchase successfully');
+        fetchItems();
+      } else {
+        alert('Error purchasing item' + result.message);
+      }
+    } catch (error) {
+      console.error('Error purchasing item:', error);
+    }
+  });
 });
