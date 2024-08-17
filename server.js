@@ -20,6 +20,8 @@ app.use('/api/dashboard', (req, res) => {
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/items', require('./routes/itemRoutes'));
 app.use('/api/partners', require('./routes/partnerRoutes'));
+app.use('/api/sales', require('./routes/salesRoutes'));
+app.use('/api/purchase', require('./routes/purchaseRoutes'));
 
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
