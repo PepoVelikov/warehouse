@@ -148,64 +148,70 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchItems();
   fetchPartners();
 
-  const slaesButton = document.getElementById('salesButton');
-  if (slaesButton) {
-    slaesButton.addEventListener('click', () => {
-      showSection('salesSection');
-    
+  const salesButton = document.getElementById('salesButton');
+  if (salesButton) {
+    salesButton.addEventListener('click', () => {
+      showSection('sales');
+    });
+  }
+
   const purchaseButton = document.getElementById('purchasesButton');
   if (purchaseButton) {
     purchaseButton.addEventListener('click', () => {
-      showSection('purchasesSection');
+      showSection('purchases');
     });
   }
 
   const salesForm = document.getElementById('salesForm');
   const purchasesForm = document.getElementById('purchasesForm');
 
-  salesForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const itemId = document.getElementById('salesItemId').value;
-    const quantity = document.getElementById('saleQuantity').value;
+  if (salesForm) {
+    salesForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const itemId = document.getElementById('salesItemId').value;
+      const quantity = document.getElementById('saleQuantity').value;
 
-    try {
-      const response = await fetch('/api/sales', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-        body: JSON.stringify({ itemId, quantity })
-      });
-      const result = await response.json();
-      if (response.ok) {
-        alert('Sale successfully');
-        fetchItems();
-      } else {
-        alert('Error selling item' + result.message);
+      try {
+        const response = await fetch('/api/sales', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+          body: JSON.stringify({ itemId, quantity })
+        });
+        const result = await response.json();
+        if (response.ok) {
+          alert('Sale successful');
+          fetchItems();
+        } else {
+          alert('Error selling item' + result.message);
+        }
+      } catch (error) {
+        console.error('Error selling item:', error);
       }
-    } catch (error) {
-      console.error('Error selling item:', error);
-    }
-  });
+    });
+  }
 
-  purchasesForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const itemId = document.getElementById('purchaseItemId').value;
-    const quantity = document.getElementById('purchaseQuantity').value;
+  if (purchasesForm) {
+    purchasesForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const itemId = document.getElementById('purchaseItemId').value;
+      const quantity = document.getElementById('purchaseQuantity').value;
 
-    try {
-      const response = await fetch('/api/purchases', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-        body: JSON.stringify({ itemId, quantity })
-      });
-      const result = await response.json();
-      if (response.ok) {
-        alert('Purchase successfully');
-        fetchItems();
-      } else {
-        alert('Error purchasing item' + result.message);
+      try {
+        const response = await fetch('/api/purchases', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+          body: JSON.stringify({ itemId, quantity })
+        });
+        const result = await response.json();
+        if (response.ok) {
+          alert('Purchase successful');
+          fetchItems();
+        } else {
+          alert('Error purchasing item' + result.message);
+        }
+      } catch (error) {
+        console.error('Error purchasing item:', error);
       }
-    } catch (error) {
-      console.error('Error purchasing item:', error);
-    }
-  });
+    });
+  }
 });
