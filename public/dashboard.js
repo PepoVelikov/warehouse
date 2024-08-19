@@ -7,13 +7,14 @@ function showSection(section) {
   document.getElementById(section + 'Section').style.display = 'block';
 }
 
-function hideAllSubsections() {
-  document.querySelectorAll('.sub-section').forEach(subSec => subSec.style.display = 'none');
-}
-
 function showSubsection(subsection) {
   hideAllSubsections();
-  document.getElementById(subsection + 'Section').style.display = 'block';
+  document.getElementById(subsection).style.display = 'block';
+}
+
+function hideAllSubsections() {
+  const subSections = document.querySelectorAll('.sub-section');
+  subSections.forEach(sec => sec.style.display = 'none');
 }
 
 hideAllSubsections();
