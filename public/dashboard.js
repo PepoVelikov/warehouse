@@ -148,6 +148,18 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchItems();
   fetchPartners();
 
+  const slaesButton = document.getElementById('salesButton');
+  if (slaesButton) {
+    slaesButton.addEventListener('click', () => {
+      showSection('salesSection');
+    
+  const purchaseButton = document.getElementById('purchasesButton');
+  if (purchaseButton) {
+    purchaseButton.addEventListener('click', () => {
+      showSection('purchasesSection');
+    });
+  }
+
   const salesForm = document.getElementById('salesForm');
   const purchasesForm = document.getElementById('purchasesForm');
 
