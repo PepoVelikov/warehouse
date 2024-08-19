@@ -64,8 +64,12 @@ a {
   align-items: flex-start;
 }
 
-.section, .sub-section {
+.section {
   margin-top: 20px;
+}
+
+.sub-section {
+  display: none;
 }
 
 .header {
