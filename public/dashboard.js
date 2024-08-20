@@ -148,20 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchItems();
   fetchPartners();
 
-  const salesButton = document.getElementById('salesButton');
-  if (salesButton) {
-    salesButton.addEventListener('click', () => {
-      showSubSection('sales');
-    });
-  }
-
-  const purchaseButton = document.getElementById('purchasesButton');
-  if (purchaseButton) {
-    purchaseButton.addEventListener('click', () => {
-      showSubSection('purchases');
-    });
-  }
-
   const salesForm = document.getElementById('salesForm');
   const purchasesForm = document.getElementById('purchasesForm');
 
