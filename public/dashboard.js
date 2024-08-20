@@ -1,5 +1,5 @@
 function hideAllSections() {
-  document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+  document.querySelectorAll('.section').forEach(section => section.style.display = 'none');
 }
 
 function showSection(section) {
@@ -7,9 +7,9 @@ function showSection(section) {
   document.getElementById(section + 'Section').style.display = 'block';
 }
 
-function showSubsection(subsection) {
+function showSubSection(subsection) {
   hideAllSubsections();
-  document.getElementById(subsection).style.display = 'block';
+  document.getElementById(subsection + 'Section').style.display = 'block';
 }
 
 function hideAllSubsections() {
@@ -19,9 +19,9 @@ function hideAllSubsections() {
 
 hideAllSubsections();
 
-hideAllSections();
-
 document.addEventListener('DOMContentLoaded', () => {
+  hideAllSections();
+
   const logoutButton = document.getElementById('logoutButton');
   if (logoutButton) {
     logoutButton.addEventListener('click', () => {
@@ -151,14 +151,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const salesButton = document.getElementById('salesButton');
   if (salesButton) {
     salesButton.addEventListener('click', () => {
-      showSection('sales');
+      showSubSection('sales');
     });
   }
 
   const purchaseButton = document.getElementById('purchasesButton');
   if (purchaseButton) {
     purchaseButton.addEventListener('click', () => {
-      showSection('purchases');
+      showSubSection('purchases');
     });
   }
 
