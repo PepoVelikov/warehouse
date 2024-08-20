@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-  
-<div class="header">
-  <h1>Welcome</h1>
-  <div id="sectionButtons">
-      <button onclick="showSection('items')">Items</button>
-      <button onclick="showSection('partners')">Partners</button>
-      <button onclick="showSection('documents')">Documents</button>
-      <button onclick="showSubSection('sales')">Sales</button>
-      <button onclick="showSubSection('purchases')">Purchases</button>
+
+  <div class="header">
+    <h1>Welcome</h1>
+    <div id="sectionButtons">
+      <button onclick="showSection('itemsSection')">Items</button>
+      <button onclick="showSection('partnersSection')">Partners</button>
+      <button onclick="showSection('documentsSection')">Documents</button>
+
     </div>
     <button id="logoutButton">Logout</button>
   </div>
-    
-  <div id="itemsSection" class="section">
+
+  <div id="itemsSection" class="section" style="display: none;">
     <h2>Items</h2>
     <ul id="itemsList"></ul>
     <form id="addItemForm">
@@ -79,4 +80,5 @@
 
   <script src="dashboard.js"></script>
 </body>
+
 </html>

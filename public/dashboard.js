@@ -1,28 +1,37 @@
-function hideAllSections() {
-  document.querySelectorAll('.section').forEach(section => section.style.display = 'none');
-}
-
-function showSection(section) {
-  hideAllSections();
-  document.getElementById(section + 'Section').style.display = 'block';
-}
-
-function showSubSection(subsection) {
-  hideAllSubsections();
-  document.getElementById(subsection + 'Section').style.display = 'block';
-}
-
-function hideAllSubsections() {
-  const subSections = document.querySelectorAll('.sub-section');
-  subSections.forEach(sec => sec.style.display = 'none');
-}
-
-hideAllSubsections();
-
 document.addEventListener('DOMContentLoaded', () => {
-  hideAllSections();
-
   const logoutButton = document.getElementById('logoutButton');
+  
+  function hideAllSections() {
+    const sections = document.querySelectorAll('.section');
+    sections.forEach((section) => {
+      section.style.display = 'none';
+    });
+  }
+
+  function hideAllSubSections() {
+    const subSections = document.querySelectorAll('.sub-section');
+    subSections.forEach((sub) => {
+      sub.style.display = 'none';
+    });
+  }
+
+  function showSection(SectionId) {
+    hideAllSections();
+    hideAllSubSections();
+    const section = document.getElementById(SectionId);
+    if (section) {
+      section.style.display = 'block';
+    }
+  }
+
+  function showSubSection(subSectionId) {7
+    hideAllSubSections();
+    const subSection = document.getElementById(subSectionId);
+    if (subSection) {
+      subSection.style.display = 'block';
+    }
+  }
+
   if (logoutButton) {
     logoutButton.addEventListener('click', () => {
       localStorage.removeItem('token');
@@ -47,6 +56,23 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error:', error);
         alert('An error occurred while fetching dashboard data');
       });
+  }
+
+  const salesButton = document.getElementById('salesButton');
+  const purchasesButton = document.getElementById('purchasesButton');
+
+  if (salesButton) {
+    salesButton.addEventListener('click', () => {
+      hideAllSections();
+      showSubSection('salesSection');
+    });
+  }
+
+  if (purchasesButton) {
+    purchasesButton.addEventListener('click', () => {
+      hideAllSections();
+      showSubSection('purchasesSection');
+    });
   }
 
   const itemsList = document.getElementById('itemsList');
