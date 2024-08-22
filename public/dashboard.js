@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
         body: JSON.stringify({ name, unit, quantity, price })
       });
-  
+
       console.log('Response status:', response.status);
 
       if (response.ok) {
@@ -100,7 +100,27 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.log('Error adding item:', error);
     }
-  });      
+  });
+
+  const addPartnerForm = document.getElementById('addPartnerForm');
+  const partnersList = document.getElementById('partnersList');
+
+  const fetchPartners = async () => {
+    try {
+      const response = await fetch('/api/partners', {
+        headers: { 'x-auth-token': token }
+      });
+      const partners = await response.json();
+      partnersList.innerHTML = '';
+      partners.forEach((partner) => {
+        const li = document.createElement('li');
+        li.textContent = `${partner.name} - ${partner.address} - ${partner.phone} - ${partner.email} - ${partner.bulstat}`;
+        partnersList.appendChild(li);
+      });
+    } catch (error) {
+      console.error('Error fetching partners:', error);
+    }
+  };
 
   addPartnerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -131,27 +151,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-    document.getElementById('itemsButton').addEventListener('click', () => {
-      showSection('itemsSection');
-    });
+  document.getElementById('itemsButton').addEventListener('click', () => {
+    showSection('itemsSection');
+  });
 
-    document.getElementById('partnersButton').addEventListener('click', () => {
-      showSection('partnersSection');
-    });
+  document.getElementById('partnersButton').addEventListener('click', () => {
+    showSection('partnersSection');
+  });
 
-    document.getElementById('documentsButton').addEventListener('click', () => {
-      showSubSection('documentsSection');
-    });
+  document.getElementById('documentsButton').addEventListener('click', () => {
+    showSubSection('documentsSection');
+  });
 
-    document.getElementById('salesButton').addEventListener('click', () => {
-      showSubSection('salesSection');
-    });
+  document.getElementById('salesButton').addEventListener('click', () => {
+    showSubSection('salesSection');
+  });
 
-    document.getElementById('purchasesButton').addEventListener('click', () => {
-      showSubSection('purchasesSection');
-    });
+  document.getElementById('purchasesButton').addEventListener('click', () => {
+    showSubSection('purchasesSection');
+  });
 
-    fetchItems();
-    fetchPartners();
+  fetchItems();
+  fetchPartners();
 
 });
