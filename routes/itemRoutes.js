@@ -13,18 +13,28 @@ router.get('/', auth, async (req, res) => {
 });
 
 router.post('/', auth, async (req, res) => {
-  const item = new Item({
-    name: req.body.name,
-    unit: req.body.unit,
-    quantity: req.body.quantity,
-    price: req.body.price
-  });
+  console.log('Received POST request for adding item');
+  console.log('Request body:', req.body);
+  
   try {
-    const newItem = await item.save();
+    const newItem = new Item({
+      name: req.body.name,
+      unit: req.body.unit,
+      quantity: req.body.quantity,
+      price: req.body.price
+    });
+
+    console.log('New item created', newItem);
+    
+    await newItem.save();
+
+    console.log('Item saved to database:', newItem);
+
     res.status(201).json(newItem);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.log('Error saving item:', err.message);
+    res.status(500).send('Server error');
   }
-});
+});    
 
 module.exports = router;
