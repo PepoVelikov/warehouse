@@ -8,23 +8,27 @@ router.get('/', auth, async (req, res) => {
     const partners = await Partner.find();
     res.json(partners);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json('Server error');
   }
 });
 
 router.post('/', auth, async (req, res) => {
-  const partner = new Partner({
-    name: req.body.name,
-    bulstat: req.body.bulstat,
-    addres: req.body.address,
-    phoneNumber: req.body.phone,
-    email: req.body.email
-  });
+  const { name, bulstat, address, phone, email } = req.body;
+
   try {
-    const newPartner = await partner.save();
-    res.status(201).json(newPartner);
+    const newPartner = new Partner({
+      name,
+      bulstat,
+      address,
+      phone,
+      email
+    });
+
+    const partner = await newPartner.save();
+    res.status(201).json(partner);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error(err.message);
+    res.status(500).json('Server error');
   }
 });
 

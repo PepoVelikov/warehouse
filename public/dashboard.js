@@ -102,6 +102,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });      
 
+  addPartnerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('partnerName').value;
+    const address = document.getElementById('partnerAddress').value;
+    const phone = document.getElementById('partnerPhone').value;
+    const email = document.getElementById('partnerEmail').value;
+    const bulstat = document.getElementById('partnerBulstat').value;
+
+    try {
+      const response = await fetch('/api/partners', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+        body: JSON.stringify({ name, address, phone, email, bulstat })
+      });
+      const newPartner = await response.json();
+      if (response.ok) {
+        const li = document.createElement('li');
+        li.textContent = `${newPartner.name} - ${newPartner.address} - ${newPartner.phone} - ${newPartner.email} - ${newPartner.bulstat}`;
+        partnersList.appendChild(li);
+        addPartnerForm.reset();
+        fetchPartners();
+      } else {
+        alert('Erroe adding new partner');
+      }
+    } catch (error) {
+      console.error('Error adding partner:', error);
+    }
+  });
+
     document.getElementById('itemsButton').addEventListener('click', () => {
       showSection('itemsSection');
     });
@@ -123,5 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     fetchItems();
+    fetchPartners();
 
 });
