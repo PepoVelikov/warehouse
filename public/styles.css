@@ -1,92 +1,9 @@
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-}
-
-.container {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 400px;
-}
-
-h1 {
-  margin-top: 0;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-form div {
-  margin-bottom: 10px;
-}
-
-label {
-  margin-bottom: 5px;
-}
-
-input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-button {
-  padding: 8px;
-  background-color: #28a745;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #218838;
-}
-
-p {
-  margin-top: 0;
-}
-
-a {
-  color: #007bff;
-}
-
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.section {
-  margin-top: 20px;
-}
-
-.sub-section {
-  display: none;
-}
-
-.header {
+.nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-.header h1 {
-  margin: 0;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  background-color: #f0f0f0;
 }
 
 .nav-buttons {
@@ -94,16 +11,35 @@ a {
   gap: 10px;
 }
 
-#logoutButton {
-  background-color: #dc3545;
+.logout-button {
+  background-color: red;
   color: white;
+  padding: 10px;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
-  padding: 8px 16px;
-  margin-left: auto;
 }
 
-#logoutButton:hover {
-  background-color: #d43f3f;
+.section, .sub-section {
+  margin: 20px;
+}
+
+h1 {
+  text-align: center;
+  flex-grow: 1;
+}
+
+button {
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #ddd;
+}
+
+button.active {
+  background-color: green;
+  color: white;
 }

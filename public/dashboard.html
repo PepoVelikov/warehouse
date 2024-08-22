@@ -10,17 +10,16 @@
 
 <body>
 
-  <div class="header">
-    <h1>Welcome</h1>
-    <div id="sectionButtons">
-      <button onclick="showSection('itemsSection')">Items</button>
-      <button onclick="showSection('partnersSection')">Partners</button>
-      <button onclick="showSection('documentsSection')">Documents</button>
-
+  <div class="nav">
+    <div class="nav-buttons">
+      <button id="itemsButton">Items</button>
+      <button id="partnersButton">Partners</button>
+      <button id="documentsButton">Documents</button>
     </div>
-    <button id="logoutButton">Logout</button>
+    <h1>Welcome</h1>
+    <button id="logoutButton" class="logout-button">Logout</button>
   </div>
-
+  
   <div id="itemsSection" class="section" style="display: none;">
     <h2>Items</h2>
     <ul id="itemsList"></ul>
@@ -48,8 +47,8 @@
 
   <div id="documentsSection" class="section" style="display: none;">
     <h2>Documents</h2>
-    <button id="salesButton" onclick="showSubSection('salesSection')">Sales</button>
-    <button id="purchasesButton" onclick="showSubSection('purchasesSection')">Purchases</button>
+    <button id="salesButton">Sales</button>
+    <button id="purchasesButton">Purchases</button>
 
     <div id="salesSection" class="sub-section" style="display: none;">
       <h3>Sales</h3>
