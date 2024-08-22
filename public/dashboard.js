@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (subSection && subSection.style.display === 'block') {
       return;
     }
-
+    hideAllSections();
     hideAllSubSections();
     if (subSection) {
       subSection.style.display = 'block';
@@ -103,20 +103,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const addPartnerForm = document.getElementById('addPartnerForm');
-  const partnersList = document.getElementById('partnersList');
 
-  const fetchPartners = async () => {
+  async function fetchPartners () {
     try {
       const response = await fetch('/api/partners', {
         headers: { 'x-auth-token': token }
       });
       const partners = await response.json();
-      partnersList.innerHTML = '';
-      partners.forEach((partner) => {
-        const li = document.createElement('li');
-        li.textContent = `${partner.name} - ${partner.address} - ${partner.phone} - ${partner.email} - ${partner.bulstat}`;
-        partnersList.appendChild(li);
-      });
+      const partnersList = document.getElementById('partnerList');
+      if (partnersList) {
+        partnersList.innerHTML = '';
+        partners.forEach((partner) => {
+          const li = document.createElement('li');
+          li.textContent = `${partner.name} - ${partner.address} - ${partner.phone} - ${partner.email} - ${partner.bulstat}`;
+          partnersList.appendChild(li);
+        });
+      }
     } catch (error) {
       console.error('Error fetching partners:', error);
     }
@@ -130,21 +132,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const email = document.getElementById('partnerEmail').value;
     const bulstat = document.getElementById('partnerBulstat').value;
 
+    console.log('Submitting new partner:', { name, address, phone, email, bulstat });
+
     try {
       const response = await fetch('/api/partners', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
         body: JSON.stringify({ name, address, phone, email, bulstat })
       });
-      const newPartner = await response.json();
+
+      console.log('Response status:', response.status);
+
       if (response.ok) {
-        const li = document.createElement('li');
-        li.textContent = `${newPartner.name} - ${newPartner.address} - ${newPartner.phone} - ${newPartner.email} - ${newPartner.bulstat}`;
-        partnersList.appendChild(li);
-        addPartnerForm.reset();
+        const newPartner = await response.json();
+        console.log('New partner created:', newPartner);
         fetchPartners();
       } else {
+        const error = await response.json();
         alert('Erroe adding new partner');
+        console.log('Error response:', newPartner);
       }
     } catch (error) {
       console.error('Error adding partner:', error);
