@@ -106,8 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     itemElements.forEach((itemEl) => {
       const itemName = itemEl.querySelector('.salesItemName').value;
-      const itemQuantity = itemEl.querySelector('.salesItemQuantity').value;
-      const itemPrice = itemEl.querySelector('.salesItemPrice').value;
+      const quantity = itemEl.querySelector('.salesItemQuantity').value;
+      const price = itemEl.querySelector('.salesItemPrice').value;
       if (itemName && quantity && price) {
         items.push({ itemName, quantity, price });
       }
