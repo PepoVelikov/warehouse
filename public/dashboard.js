@@ -36,6 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
       section.style.display = 'block';
       hideAllSubSections();
     }
+
+    if (sectionId === 'itemSection') {
+      document.getElementById('addItemSection').style.display = 'block';
+    } else if (sectionId === 'purchasesSection') {
+      document.getElementById('addPurchasesSection').style.display = 'block';
+    }
   }
 
   function showSubSection(subSectionId) {
