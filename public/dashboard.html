@@ -28,7 +28,7 @@
       <input type="text" id="itemUnit" name="itemUnit" placeholder="Unit">
       <input type="number" id="itemQuantity" name="itemQuantity" placeholder="Quantity">
       <input type="number" id="price" name="price" placeholder="Price">
-      <button type="submit" id="addItemButton" style="display: none;">Add Item</button>
+      <button type="submit">Add Item</button>
     </form>
   </div>
 
@@ -52,14 +52,13 @@
 
     <div id="salesSection" class="sub-section" style="display: none;">
       <h3>Sales</h3>
-      <ul id="salesList"></ul>
       <form id="addSalesForm">
-        <input type="text" id="salesName" name="salesName" placeholder="Name">
-        <input type="text" id="salesBulstat" name="salesBulstat" placeholder="Bulstat">
-        <input type="text" id="salesAddress" name="salesAddress" placeholder="Address">
-        <input type="text" id="salesEmail" name="salesEmail" placeholder="Email">
-        <input type="text" id="salesPhone" name="salesPhone" placeholder="Phone">
-        <h4>Items:</h4>
+        <input type="text" id="salesName" name="salesName" placeholder="Customer Name">
+        <input type="text" id="salesBulstat" name="salesBulstat" placeholder="Customer Bulstat">
+        <input type="text" id="salesAddress" name="salesAddress" placeholder="Customer Address">
+        <input type="text" id="salesEmail" name="salesEmail" placeholder="Customer Email">
+        <input type="text" id="salesPhone" name="salesPhone" placeholder="Customer Phone">
+        <h4>Items</h4>
         <div id="salesItems">
           <div class="sales-item">
             <input type="text" class="salesItemName" placeholder="Item Name">
@@ -68,29 +67,28 @@
           </div>
         </div>
         <button type="button" id="addSalesItem">Add Item</button>
-        <button type="submit">Add Sales</button>
+        <button type="submit">Submit Sale</button>
       </form>
     </div>
 
     <div id="purchasesSection" class="sub-section" style="display: none;">
       <h3>Purchases</h3>
-      <ul id="purchasesList"></ul>
       <form id="addPurchasesForm">
-        <input type="text" id="purchasesName" name="purchasesName" placeholder="Name">
-        <input type="text" id="purchasesBulstat" name="purchasesBulstat" placeholder="Bulstat">
-        <input type="text" id="purchasesAddress" name="purchasesAddress" placeholder="Address">
-        <input type="text" id="purchasesEmail" name="purchasesEmail" placeholder="Email">
-        <input type="text" id="purchasesPhone" name="purchasesPhone" placeholder="Phone">
-        <h4>Items:</h4>
-          <div id="purchasesItems">
-          <div class="purchases-item">
-            <input type="text" class="purchasesItemName" placeholder="Item Name">
-            <input type="number" class="purchasesItemQuantity" placeholder="Quantity">
-            <input type="number" class="purchasesItemPrice" placeholder="Price">
+        <input type="text" id="purchasesName" name="purchasesName" placeholder="Supplier Name">
+        <input type="text" id="purchasesBulstat" name="purchasesBulstat" placeholder="Supplier Bulstat">
+        <input type="text" id="purchasesAddress" name="purchasesAddress" placeholder="Supplier Address">
+        <input type="text" id="purchasesEmail" name="purchasesEmail" placeholder="Supplier Email">
+        <input type="text" id="purchasesPhone" name="purchasesPhone" placeholder="Supplier Phone">
+        <h4>Items</h4>
+        <div id="purchaseItems">
+          <div class="purchase-item">
+            <input type="text" class="purchaseItemName" placeholder="Item Name">
+            <input type="number" class="purchaseItemQuantity" placeholder="Quantity">
+            <input type="number" class="purchaseItemPrice" placeholder="Price">
           </div>
         </div>
-        <button type="button" id="addPurchasesItem" style="display: none;">Add Item</button>
-        <button type="submit">Add Purchases</button>
+        <button type="button" id="addPurchaseItem">Add Item</button>
+        <button type="submit">Submit Purchase</button>
       </form>
     </div>
   </div>
