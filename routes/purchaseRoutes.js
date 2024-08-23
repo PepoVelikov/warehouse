@@ -2,22 +2,31 @@ const express = require('express');
 const router = express.Router();
 const Item = require('../models/item');
 const auth = require('../middleware/auth');
+const Purchase = require('../models/purchase');
+
+router.get('/', auth, async (req, res) => {
+  try {
+    const purchases = await Purchase.find();
+    res.json(purchases);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
 
 router.post('/', auth, async (req, res) => {
   const { itemId, quantity } = req.body;
 
   try {
-    const item = await Item.findById(itemId);
-    if (!item) {
-      return res.status(404).json({ message: 'Item not found' });
-    }
+    const newPurchase = new Purchase({
+      itemId,
+      quantity
+    });
 
-    item.quantity += quantity;
-    await item.save();
-
-    res.status(200).json({ message: 'Item purchased successfully', item });
+    const purchase = await newPurchase.save();
+    res.status(201).json(purchase);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
 });
 
