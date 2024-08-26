@@ -1,18 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
   const logoutButton = document.getElementById('logoutButton');
 
-  const token = localStorage.getItem('token');
-
-  if (!token) {
-    window.location.href = 'login.html';
-    return;
-  }
-
   if (logoutButton) {
     logoutButton.addEventListener('click', () => {
       localStorage.removeItem('token');
       window.location.href = 'login.html';
     });
+  }
+
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    window.location.href = 'login.html';
+  } else {
+    fetch('/api/dashboard', {
+      method: 'GET',
+      headers: { 'x-auth-token': token }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Dashboard data:', data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('An error occurred while fetching dashboard data');
+      });
   }
 
   function hideAllSections() {
@@ -22,167 +34,198 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function hideAllSubSections() {
-    const subSections = document.querySelectorAll('.sub-section');
-    subSections.forEach((sub) => {
-      sub.style.display = 'none';
-    });
-  }
-
   function showSection(sectionId) {
     hideAllSections();
     const section = document.getElementById(sectionId);
     if (section) {
       section.style.display = 'block';
-      hideAllSubSections();
     }
   }
 
-  function showSubSection(subSectionId) {
-    const subSection = document.getElementById(subSectionId);
-    if (subSection && subSection.style.display === 'block') {
-      return;
-    }
-    hideAllSections();
-    hideAllSubSections();
-    if (subSection) {
-      subSection.style.display = 'block';
-    }
+  const itemsButton = document.getElementById('itemsButton');
+  const partnersButton = document.getElementById('partnersButton');
+  const salesButton = document.getElementById('salesButton');
+  const purchasesButton = document.getElementById('purchasesButton');
+
+  if (itemsButton) {
+    itemsButton.addEventListener('click', () => {
+      showSection('itemsSection');
+    });
   }
 
-  const addSalesItemBtn = document.getElementById('addSalesItem');
-  const salesItemsDiv = document.getElementById('salesItems');
+  if (partnersButton) {
+    partnersButton.addEventListener('click', () => {
+      showSection('partnersSection');
+    });
+  }
 
-  addSalesItemBtn.addEventListener('click', () => {
-    const itemDiv = document.createElement('div');
-    itemDiv.className = 'sales-item';
-    itemDiv.innerHTML = `
-      <input type="text" class="salesItemName" placeholder="Item Name">
-      <input type="number" class="salesItemQuantity" placeholder="Quantity">
-      <input type="number" class="salesItemPrice" placeholder="Price">
-    `;
-    salesItemsDiv.appendChild(itemDiv);
-  });
+  if (salesButton) {
+    salesButton.addEventListener('click', () => {
+      showSection('salesSection');
+    });
+  }
 
-  const addPurchaseItemBtn = document.getElementById('addPurchaseItem');
-  const purchaseItemsDiv = document.getElementById('purchaseItems');
+  if (purchasesButton) {
+    purchasesButton.addEventListener('click', () => {
+      showSection('purchasesSection');
+    });
+  }
 
-  addPurchaseItemBtn.addEventListener('click', () => {
-    const itemDiv = document.createElement('div');
-    itemDiv.className = 'purchase-item';
-    itemDiv.innerHTML = `
-      <input type="text" class="purchaseItemName" placeholder="Item Name">
-      <input type="number" class="purchaseItemQuantity" placeholder="Quantity">
-      <input type="number" class="purchaseItemPrice" placeholder="Price">
-    `;
-    purchaseItemsDiv.appendChild(itemDiv);
-  });
+  const itemsList = document.getElementById('itemsList');
+  const addItemForm = document.getElementById('addItemForm');
+  const partnersList = document.getElementById('partnersList');
+  const addPartnerForm = document.getElementById('addPartnerForm');
 
-  document.getElementById('salesButton').addEventListener('click', () => {
-    showSubSection('salesSection');
-  });
+  const fetchItems = async () => {
+    try {
+      const response = await fetch('/api/items', {
+        headers: { 'x-auth-token': token }
+      });
+      const items = await response.json();
+      itemsList.innerHTML = '';
+      items.forEach((item) => {
+        const li = document.createElement('li');
+        li.textContent = `${item.name} - ${item.unit} - ${item.quantity} - ${item.price} BGN`;
+        itemsList.appendChild(li);
+      });
+    } catch (error) {
+      console.error('Error fetching items:', error);
+    }
+  };
 
-  document.getElementById('purchasesButton').addEventListener('click', () => {
-    showSubSection('purchasesSection');
-  });
+  const fetchPartners = async () => {
+    try {
+      const response = await fetch('/api/partners', {
+        headers: { 'x-auth-token': token }
+      });
+      const partners = await response.json();
+      partnersList.innerHTML = '';
+      partners.forEach((partner) => {
+        const li = document.createElement('li');
+        li.textContent = `${partner.name} - ${partner.bulstat} - ${partner.address} - ${partner.phone} - ${partner.email}`;
+        partnersList.appendChild(li);
+      });
+    } catch (error) {
+      console.error('Error fetching partners:', error);
+    }
+  };
 
-  const addSalesForm = document.getElementById('addSalesForm');
-  addSalesForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  if (addItemForm) {
+    addItemForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const unit = document.getElementById('unit').value;
+      const quantity = document.getElementById('quantity').value;
+      const price = document.getElementById('price').value;
 
-    const name = document.getElementById('salesName').value;
-    const bulstat = document.getElementById('salesBulstat').value;
-    const address = document.getElementById('salesAddress').value;
-    const email = document.getElementById('salesEmail').value;
-    const phone = document.getElementById('salesPhone').value;
-    
-    const items = [];
-    const itemElements = salesItemsDiv.querySelectorAll('.sales-item');
-
-    itemElements.forEach((itemEl) => {
-      const itemName = itemEl.querySelector('.salesItemName').value;
-      const quantity = itemEl.querySelector('.salesItemQuantity').value;
-      const price = itemEl.querySelector('.salesItemPrice').value;
-      if (itemName && quantity && price) {
-        items.push({ itemName, quantity, price });
+      try {
+        const response = await fetch('/api/items', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+          body: JSON.stringify({ name, unit, quantity, price })
+        });
+        const newItem = await response.json();
+        if (response.ok) {
+          const li = document.createElement('li');
+          li.textContent = `${newItem.name} - ${newItem.unit} - ${newItem.quantity} - ${newItem.price} BGN`;
+          itemsList.appendChild(li);
+          addItemForm.reset();
+          fetchItems();
+        } else {
+          alert('Error adding item:', newItem);
+        }
+      } catch (error) {
+        console.error('Error adding item:', error);
       }
     });
+  }
 
-    const saleData = { name, bulstat, address, email, phone, items };
+  if (addPartnerForm) {
+    addPartnerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('partnerName').value;
+      const bulstat = document.getElementById('partnerBulstat').value;
+      const address = document.getElementById('partnerAddress').value;
+      const email = document.getElementById('partnerEmail').value;
+      const phone = document.getElementById('partnerPhone').value;
 
-    try {
-      const response = await fetch('/api/sales', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-        body: JSON.stringify(saleData)
-      });
-
-      if (response.ok) {
-        alert('Sale submitted successfully');
-        salesItemsDiv.innerHTML = '';
-        const error = await response.json();
-        alert('Error submitting sale:', error.message || 'Unknown error');
-      }
-    } catch (error) {
-      console.error('Error submitting sale:', error);
-    }
-  });
-
-  const addPurchasesForm = document.getElementById('addPurchasesForm');
-  addPurchasesForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const name = document.getElementById('purchasesName').value;
-    const bulstat = document.getElementById('purchasesBulstat').value;
-    const address = document.getElementById('purchasesAddress').value;
-    const email = document.getElementById('purchasesEmail').value;
-    const phone = document.getElementById('purchasesPhone').value;
-    
-    const items = [];
-    const itemElements = purchaseItemsDiv.querySelectorAll('.purchase-item');
-
-    itemElements.forEach((itemEl) => {
-      const itemName = itemEl.querySelector('.purchaseItemName').value;
-      const quantity = itemEl.querySelector('.purchaseItemQuantity').value;
-      const price = itemEl.querySelector('.purchaseItemPrice').value;
-      if (itemName && quantity && price) {
-        items.push({ itemName, quantity, price });
+      try {
+        const response = await fetch('/api/partners', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+          body: JSON.stringify({ name, bulstat, address, email, phone })
+        });
+        const newPartner = await response.json();
+        if (response.ok) {
+          const li = document.createElement('li');
+          li.textContent = `${newPartner.name} - ${newPartner.bulstat} - ${newPartner.address} - ${newPartner.phone} - ${newPartner.email}`;
+          partnersList.appendChild(li);
+          addPartnerForm.reset();
+          fetchPartners();
+        } else {
+          alert('Error adding partner:', newPartner);
+        }
+      } catch (error) {
+        console.error('Error adding partner:', error);
       }
     });
-
-    const purchaseData = { name, bulstat, address, email, phone, items };
-
-    try {
-      const response = await fetch('/api/purchases', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-        body: JSON.stringify(purchaseData)
-      });
-
-      if (response.ok) {
-        alert('Purchase submitted successfully');
-        purchaseItemsDiv.innerHTML = ''; // Clear form
-      } else {
-        const error = await response.json();
-        alert('Error submitting purchase:', error.message || 'Unknown error');
-      }
-    } catch (error) {
-      console.error('Error submitting purchase:', error);
-    }
-  });
-
-  document.getElementById('itemsButton').addEventListener('click', () => {
-    showSection('itemsSection');
-  });
-
-  document.getElementById('partnersButton').addEventListener('click', () => {
-    showSection('partnersSection');
-  });
-
-  document.getElementById('documentsButton').addEventListener('click', () => {
-    showSubSection('documentsSection');
-  });
+  }
 
   fetchItems();
   fetchPartners();
+
+  const salesForm = document.getElementById('salesForm');
+  const purchasesForm = document.getElementById('purchasesForm');
+
+  if (salesForm) {
+    salesForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const itemName = document.querySelector('.salesItemName').value;
+      const itemQuantity = document.querySelector('.salesItemQuantity').value;
+      const itemPrice = document.querySelector('.salesItemPrice').value;
+
+      try {
+        const response = await fetch('/api/sales', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+          body: JSON.stringify({ itemName, itemQuantity, itemPrice })
+        });
+        const result = await response.json();
+        if (response.ok) {
+          alert('Sale added successfully');
+          salesForm.reset();
+        } else {
+          alert('Error adding sale:', result);
+        }
+      } catch (error) {
+        console.error('Error adding sale:', error);
+      }
+    });
+  }
+
+  if (purchasesForm) {
+    purchasesForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const itemName = document.querySelector('.purchasesItemName').value;
+      const itemQuantity = document.querySelector('.purchasesItemQuantity').value;
+      const itemPrice = document.querySelector('.purchasesItemPrice').value;
+
+      try {
+        const response = await fetch('/api/purchases', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+          body: JSON.stringify({ itemName, itemQuantity, itemPrice })
+        });
+        const result = await response.json();
+        if (response.ok) {
+          alert('Purchase added successfully');
+          purchasesForm.reset();
+        } else {
+          alert('Error adding purchase:', result);
+        }
+      } catch (error) {
+        console.error('Error adding purchase:', error);
+      }
+    });
+  }
 });
