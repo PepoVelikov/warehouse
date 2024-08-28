@@ -6,27 +6,22 @@ const Purchase = require('../models/purchase');
 
 router.get('/', auth, async (req, res) => {
   try {
-    const purchases = await Purchase.find();
-    res.json(purchases);
+    const purchase = await Purchase.find();
+    res.json(purchase);
   } catch (err) {
     res.status(500).send('Server error');
   }
 });
 
-router.post('/', auth, async (req, res) => {
-  const { itemId, quantity } = req.body;
-
+router.post('/api/purchase', async (req, res) => {
+  console.log(req.body);
   try {
-    const newPurchase = new Purchase({
-      itemId,
-      quantity
-    });
-
+    const newPurchase = new Purchase(req.body);
     const purchase = await newPurchase.save();
     res.status(201).json(purchase);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Error creating purchase', error });
   }
 });
 

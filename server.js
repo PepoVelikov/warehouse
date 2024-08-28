@@ -17,10 +17,12 @@ app.use('/api/dashboard', (req, res) => {
   res.json({ message : 'Welcome to the Dashboard' })
 });
 
+const salesRoutes = require('./routes/salesRoutes');
+app.use('/api/sales', salesRoutes);
+
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/items', require('./routes/itemRoutes'));
 app.use('/api/partners', require('./routes/partnerRoutes'));
-app.use('/api/sales', require('./routes/salesRoutes'));
 app.use('/api/purchase', require('./routes/purchaseRoutes'));
 
 const PORT = 3000;

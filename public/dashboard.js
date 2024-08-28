@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const itemsButton = document.getElementById('itemsButton');
   const partnersButton = document.getElementById('partnersButton');
   const salesButton = document.getElementById('salesButton');
-  const purchasesButton = document.getElementById('purchasesButton');
+  const purchaseButton = document.getElementById('purchaseButton');
 
   if (itemsButton) {
     itemsButton.addEventListener('click', () => {
@@ -65,9 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (purchasesButton) {
-    purchasesButton.addEventListener('click', () => {
-      showSection('purchasesSection');
+  if (purchaseButton) {
+    purchaseButton.addEventListener('click', () => {
+      showSection('purchaseSection');
     });
   }
 
@@ -113,9 +113,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (addItemForm) {
     addItemForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('name').value;
-      const unit = document.getElementById('unit').value;
-      const quantity = document.getElementById('quantity').value;
+      const name = document.getElementById('itemName').value;
+      const unit = document.getElementById('itemUnit').value;
+      const quantity = document.getElementById('itemQuantity').value;
       const price = document.getElementById('price').value;
 
       try {
@@ -174,28 +174,45 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchItems();
   fetchPartners();
 
-  const salesForm = document.getElementById('salesForm');
-  const purchasesForm = document.getElementById('purchasesForm');
+  const salesForm = document.getElementById('addSalesForm');
+  const addSalesItemButton = document.getElementById('addSalesItem');
+  const purchaseForm = document.getElementById('purchaseForm');
 
   if (salesForm) {
     salesForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const itemName = document.querySelector('.salesItemName').value;
-      const itemQuantity = document.querySelector('.salesItemQuantity').value;
-      const itemPrice = document.querySelector('.salesItemPrice').value;
+      const customerName = document.getElementById('salesName').value;
+      const customerBulstat = document.getElementById('salesBulstat').value;
+      const customerAddress = document.getElementById('salesAddress').value;
+      const customerEmail = document.getElementById('salesEmail').value;
+      const customerPhone = document.getElementById('salesPhone').value;
+
+      const items = Array.from(document.querySelectorAll('.sales-item')).map((item) => ({
+        itemName: item.querySelector('.salesItemName').value,
+        itemQuantity: item.querySelector('.salesItemQuantity').value,
+        itemPrice: item.querySelector('.salesItemPrice').value
+      }));
+
+      const saleData = { customerName, customerBulstat, customerAddress, customerEmail, customerPhone, items };
 
       try {
         const response = await fetch('/api/sales', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-          body: JSON.stringify({ itemName, itemQuantity, itemPrice })
-        });
-        const result = await response.json();
+          body: JSON.stringify(saleData)
+      });
+      console.log('Response status:', response.status);
+      console.log('Response data:', await response.json());
+      
+      
+      
         if (response.ok) {
-          alert('Sale added successfully');
+          console.log('Sale added successfully');
           salesForm.reset();
         } else {
-          alert('Error adding sale:', result);
+          const errorResponse = await response.json();
+          console.error('Error adding sale:', newSale);
+          alert('Error adding sale', newSale);
         }
       } catch (error) {
         console.error('Error adding sale:', error);
@@ -203,23 +220,58 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (purchasesForm) {
-    purchasesForm.addEventListener('submit', async (e) => {
+  if (addSalesItemButton) {
+    addSalesItemButton.addEventListener('click', () => {
+      const itemName = document.querySelector('.salesItemName').value;
+      const itemQuantity = document.querySelector('.salesItemQuantity').value;
+      const itemPrice = document.querySelector('.salesItemPrice').value;
+
+      if (itemName && itemQuantity && itemPrice) {
+        const salesItemContainer = document.getElementById('salesItem');
+        const newItemDiv = document.createElement('div');
+        newItemDiv.classList.add('sales-item');
+
+        newItemDiv.innerHTML = `
+          <input type="text" class="salesItemName" value="${itemName}" readonly>
+          <input type="number" class="salesItemQuantity" value="${itemQuantity}" readonly>
+          <input type="number" class="salesItemPrice" value="${itemPrice}" readonly>
+        `;
+
+        salesItemContainer.appendChild(newItemDiv);
+
+        document.querySelector('.salesItemName').value = '';
+        document.querySelector('.salesItemQuantity').value = '';
+        document.querySelector('.salesItemPrice').value = '';
+      } else {
+        alert('Please fill in all fields');
+      }
+    });
+  }
+
+  if (purchaseForm) {
+    purchaseForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const itemName = document.querySelector('.purchasesItemName').value;
-      const itemQuantity = document.querySelector('.purchasesItemQuantity').value;
-      const itemPrice = document.querySelector('.purchasesItemPrice').value;
+      const purchaseName = document.getElementById('purchaseName').value;
+      const purchaseBulstat = document.getElementById('purchaseBulstat').value;
+      const purchaseAddress = document.getElementById('purchaseAddress').value;
+      const purchaseEmail = document.getElementById('purchaseEmail').value;
+      const purchasePhone = document.getElementById('purchasePhone').value;
+      const items = Array.from(document.querySelectorAll('.purchase-item')).map((item) => ({
+        itemName: item.querySelector('.purchaseItemName').value,
+        itemQuantity: item.querySelector('.purchaseItemQuantity').value,
+        itemPrice: item.querySelector('.purchaseItemPrice').value
+      }));
 
       try {
-        const response = await fetch('/api/purchases', {
+        const response = await fetch('/api/purchase', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-          body: JSON.stringify({ itemName, itemQuantity, itemPrice })
+          body: JSON.stringify({ purchaseName, purchaseBulstat, purchaseAddress, purchaseEmail, purchasePhone, items })
         });
         const result = await response.json();
         if (response.ok) {
           alert('Purchase added successfully');
-          purchasesForm.reset();
+          purchaseForm.reset();
         } else {
           alert('Error adding purchase:', result);
         }
