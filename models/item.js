@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const ItemSchema = new mongoose.Schema({
-  number: { type: Number, unique: true, index: true},
+  itemNumber: { type: Number, unique: true, index: true},
   name: { type: String, unique: true, require: true},
   unit: { type: String, require: true},
   quantity: { type: Number, require: true},

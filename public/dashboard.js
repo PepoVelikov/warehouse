@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newItem = await response.json();
         if (response.ok) {
           const li = document.createElement('li');
-          li.textContent = `${newItem.name} - ${newItem.unit} - ${newItem.quantity} - ${newItem.price} BGN`;
+          li.textContent = `${newItem.itemNumber} - ${newItem.name} - ${newItem.unit} - ${newItem.quantity} - ${newItem.price} BGN`;
           itemsList.appendChild(li);
           addItemForm.reset();
           fetchItems();
