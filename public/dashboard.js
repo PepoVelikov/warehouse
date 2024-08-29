@@ -176,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const salesForm = document.getElementById('addSalesForm');
   const addSalesItemButton = document.getElementById('addSalesItem');
-  const purchaseForm = document.getElementById('purchaseForm');
 
   if (salesForm) {
     salesForm.addEventListener('submit', async (e) => {
@@ -203,8 +202,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       console.log('Response status:', response.status);
       console.log('Response data:', await response.json());
-      
-      
       
         if (response.ok) {
           console.log('Sale added successfully');
@@ -248,6 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const purchaseForm = document.getElementById('addPurchaseForm');
+  const addPurchaseItemButton = document.getElementById('addPurchaseItem');
+
   if (purchaseForm) {
     purchaseForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -256,27 +256,62 @@ document.addEventListener('DOMContentLoaded', () => {
       const purchaseAddress = document.getElementById('purchaseAddress').value;
       const purchaseEmail = document.getElementById('purchaseEmail').value;
       const purchasePhone = document.getElementById('purchasePhone').value;
+      
       const items = Array.from(document.querySelectorAll('.purchase-item')).map((item) => ({
         itemName: item.querySelector('.purchaseItemName').value,
         itemQuantity: item.querySelector('.purchaseItemQuantity').value,
         itemPrice: item.querySelector('.purchaseItemPrice').value
       }));
 
+      const purchaseData = { purchaseName, purchaseBulstat, purchaseAddress, purchaseEmail, purchasePhone, items };
+
       try {
         const response = await fetch('/api/purchase', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-          body: JSON.stringify({ purchaseName, purchaseBulstat, purchaseAddress, purchaseEmail, purchasePhone, items })
+          body: JSON.stringify(purchaseData)
         });
-        const result = await response.json();
+        console.log('Response status:', response.status);
+        console.log('Response data:', await response.json());
+        
         if (response.ok) {
-          alert('Purchase added successfully');
+          console.log('Purchase added successfully');
           purchaseForm.reset();
         } else {
-          alert('Error adding purchase:', result);
+          const errorResponse = await response.json();
+          console.error('Error adding purchase:', newPurchase);
+          alert('Error adding purchase:', newPurchase);
         }
       } catch (error) {
         console.error('Error adding purchase:', error);
+      }
+    });
+  }
+
+  if (addPurchaseItemButton) {
+    addPurchaseItemButton.addEventListener('click', () => {
+      const itemName = document.querySelector('.purchaseItemName').value;
+      const itemQuantity = document.querySelector('.purchaseItemQuantity').value;
+      const itemPrice = document.querySelector('.purchaseItemPrice').value;
+
+      if (itemName && itemQuantity && itemPrice) {
+        const purchaseItemContainer = document.getElementById('purchaseItem');
+        const newItemDiv = document.createElement('div');
+        newItemDiv.classList.add('purchase-item');
+
+        newItemDiv.innerHTML = `
+          <input type="text" class="purchaseItemName" value="${itemName}" readonly>
+          <input type="number" class="purchaseItemQuantity" value="${itemQuantity}" readonly>
+          <input type="number" class="purchaseItemPrice" value="${itemPrice}" readonly>
+        `;
+
+        purchaseItemContainer.appendChild(newItemDiv);
+
+        document.querySelector('.purchaseItemName').value = '';
+        document.querySelector('.purchaseItemQuantity').value = '';
+        document.querySelector('.purchaseItemPrice').value = '';
+      } else {
+        alert('Please fill in all fields');
       }
     });
   }

@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const Item = require('../models/item');
 const auth = require('../middleware/auth');
 const Purchase = require('../models/purchase');
 
@@ -13,15 +12,15 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-router.post('/api/purchase', async (req, res) => {
-  console.log(req.body);
+router.post('/', async (req, res) => {
+  
   try {
     const newPurchase = new Purchase(req.body);
-    const purchase = await newPurchase.save();
-    res.status(201).json(purchase);
+    await newPurchase.save();
+    res.status(201).json(newPurchase);
   } catch (err) {
-    console.error('Error:', error);
-    res.status(500).json({ message: 'Error creating purchase', error });
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
 });
 

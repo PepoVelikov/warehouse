@@ -13,8 +13,6 @@ const purchaseSchema = new mongoose.Schema({
       itemPrice: { type: Number, require: true }
     }
   ],
-}, {
-  timestamps: true
 });
 
 module.exports = mongoose.model('Purchase', purchaseSchema);
