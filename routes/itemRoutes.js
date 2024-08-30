@@ -30,7 +30,7 @@ router.post('/', auth, async (req, res) => {
       quantity: req.body.quantity,
       price: req.body.price
     });
-    console.log('New item created', item);
+    console.log('New item created:', item);
     
     const savedItem = await item.save();
     console.log('Item saved to database:', savedItem);

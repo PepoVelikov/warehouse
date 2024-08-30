@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newPartner = await response.json();
         if (response.ok) {
           const li = document.createElement('li');
-          li.textContent = `${newPartner.name} - ${newPartner.bulstat} - ${newPartner.address} - ${newPartner.phone} - ${newPartner.email}`;
+          li.textContent = `${newPartner.partnerNumbur} - ${newPartner.name} - ${newPartner.bulstat} - ${newPartner.address} - ${newPartner.phone} - ${newPartner.email}`;
           partnersList.appendChild(li);
           addPartnerForm.reset();
           fetchPartners();
