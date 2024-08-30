@@ -79,3 +79,28 @@ form#addItemForm div select {
 form#addItemForm button {
   padding: 5px 10px;
 }
+
+form#addPartnerForm {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+form#addPartnerForm div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+form#addPartnerForm div label {
+  margin-bottom: 5px;
+}
+
+form#addPartnerForm div input {
+  padding: 5px;
+  width: 100px;
+}
+
+form#addPartnerForm button {
+  padding: 5px 10px;
+}
