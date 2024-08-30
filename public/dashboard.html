@@ -26,7 +26,12 @@
     <ul id="itemsList"></ul>
     <form id="addItemForm">
       <input type="text" id="itemName" name="itemName" placeholder="Name">
-      <input type="text" id="itemUnit" name="itemUnit" placeholder="Unit">
+      <select id="itemUnit" name="itemUnit">
+        <option value="kg">kg</option>
+        <option value="l">l</option>
+        <option value="pcs">pcs</option>
+        <option value="m">m</option>
+      </select>
       <input type="number" id="itemQuantity" name="itemQuantity" placeholder="Quantity">
       <input type="number" id="price" name="price" placeholder="Price">
       <button type="submit">Add Item</button>
