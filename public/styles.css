@@ -43,3 +43,39 @@ button.active {
   background-color: green;
   color: white;
 }
+
+form div {
+  margin-bottom: 10px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+form#addItemForm {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+form#addItemForm div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+form#addItemForm div label {
+  margin-bottom: 5px;
+}
+
+form#addItemForm div input,
+form#addItemForm div select {
+  padding: 5px;
+  width: 100px;
+}
+
+form#addItemForm button {
+  padding: 5px 10px;
+}
