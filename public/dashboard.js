@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function hideAllSections() {
-    const sections = document.querySelectorAll('.section');
+    const sections = document.querySelectorAll('.section, .sub-section');
     sections.forEach((section) => {
       section.style.display = 'none';
     });

@@ -1,3 +1,9 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  padding: 0;
+}
+
 .nav {
   display: flex;
   justify-content: space-between;
@@ -6,9 +12,8 @@
   background-color: #f0f0f0;
 }
 
-.nav-buttons {
-  display: flex;
-  gap: 10px;
+.nav-buttons button {
+  margin-right: 10px;
 }
 
 .logout-button {
@@ -20,7 +25,50 @@
 }
 
 .section, .sub-section {
+  display: none;
   margin: 20px;
+}
+
+.sales-details, 
+.sales-items {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.sales-details div,
+.sales-items div {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.sales-details div input, 
+.sales-items div input {
+  padding: 5px;
+  width: 20px;
+}
+
+.sales-details label,
+.sales-items label {
+  display: block;
+  margin-right: 10px;
+}
+
+#salesSection {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+#salesSection .sales-details,
+#salesSection .sales-items {
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+#salesSection button {
+  display: block;
+  margin-top: 10px;
 }
 
 h1 {
@@ -29,23 +77,12 @@ h1 {
 }
 
 button {
-  padding: 10px;
-  border: 1px solid #ccc;
-  background-color: #f0f0f0;
+  margin-top: 10px;
   cursor: pointer;
 }
 
 button:hover {
   background-color: #ddd;
-}
-
-button.active {
-  background-color: green;
-  color: white;
-}
-
-form div {
-  margin-bottom: 10px;
 }
 
 label {
@@ -54,53 +91,75 @@ label {
   font-weight: bold;
 }
 
-form#addItemForm {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-form#addItemForm div {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-form#addItemForm div label {
-  margin-bottom: 5px;
-}
-
-form#addItemForm div input,
-form#addItemForm div select {
-  padding: 5px;
-  width: 100px;
-}
-
-form#addItemForm button {
-  padding: 5px 10px;
-}
-
+form#addItemForm,
 form#addPartnerForm {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-form#addPartnerForm div {
-  display: flex;
+form#addSalesForm div {
+  margin-bottom: 10px;
+}
+
+form#addItemForm div,
+form#addPartnerForm div,
+form#addSalesForm div {
+  display: block;
   flex-direction: column;
   align-items: flex-start;
 }
 
-form#addPartnerForm div label {
-  margin-bottom: 5px;
+form#addItemForm div,
+form#addPartnerForm div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 }
 
+form#addItemForm div label,
+form#addPartnerForm div label,
+form#addSalesForm div label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+form#addItemForm div input,
+form#addItemForm div select,
 form#addPartnerForm div input {
   padding: 5px;
-  width: 100px;
+  width: 10px;
 }
 
-form#addPartnerForm button {
+form#addSalesForm div input {
+  width: 100%;
+}
+
+form#addItemForm button,
+form#addPartnerForm button,
+form#addSalesForm button,
+form#addSalesItem button {
   padding: 5px 10px;
 }
+
+#itemSection form div,
+#partnerSection form div {
+  margin-right: 10px;
+}
+
+#salesSection form div:last-child {
+  margin-right: 0;
+}
+
+#addSalesItem,
+#addSalesForm button[type="submit"] {
+  display: block;
+  margin-top: 10px;
+}
+
+#salesSection.active #addSalesItem,
+#salesSection.active #addSalesForm button[type="submit"] {
+  display: block;
+}
+
