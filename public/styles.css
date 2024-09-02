@@ -14,6 +14,9 @@ body {
 
 .nav-buttons button {
   margin-right: 10px;
+  background-color: forestgreen;
+  width: 80px;
+  height: 30px;
 }
 
 .logout-button {
@@ -25,53 +28,50 @@ body {
 }
 
 .section, .sub-section {
-  display: none;
-  margin: 20px;
+  display: flex;
+  flex-direction: wrap;
+  margin: 10px;
 }
 
-.sales-details, 
-.sales-items {
+.sales-details,
+.sales-items,
+.purchase-details,
+.purchase-item {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  width: 100%;
 }
 
 .sales-details div,
-.sales-items div {
-  flex: 1;
-  margin-right: 10px;
-}
-
-.sales-details div input, 
-.sales-items div input {
-  padding: 5px;
-  width: 20px;
+.sales-items div,
+.purchase-details div,
+.purchase-item div {
+  flex: 1 1 auto;
+  margin-right: 5px;
+  margin-bottom: 20px;
 }
 
 .sales-details label,
-.sales-items label {
+.sales-items label,
+.purchase-details label,
+.purchase-item label {
   display: block;
-  margin-right: 10px;
+  margin-bottom: 5px;
 }
 
-#salesSection {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+.sales-details input,
+.sales-items input,
+.purchase-details input,
+.purchase-item input {
+  flex-grow: 1;
+  width: 140px;
+  padding: 5px;
+  margin-right: 0;
 }
 
-#salesSection .sales-details,
-#salesSection .sales-items {
-  flex-direction: row;
-  margin-bottom: 10px;
-}
-
-#salesSection button {
-  display: block;
-  margin-top: 10px;
-}
-
-h1 {
+h1,
+h2 {
+  margin: 0;
   text-align: center;
   flex-grow: 1;
 }
@@ -98,13 +98,8 @@ form#addPartnerForm {
   gap: 15px;
 }
 
-form#addSalesForm div {
-  margin-bottom: 10px;
-}
-
 form#addItemForm div,
-form#addPartnerForm div,
-form#addSalesForm div {
+form#addPartnerForm div {
   display: block;
   flex-direction: column;
   align-items: flex-start;
@@ -119,8 +114,9 @@ form#addPartnerForm div {
 }
 
 form#addItemForm div label,
-form#addPartnerForm div label,
-form#addSalesForm div label {
+form#addPartnerForm div label {
+  flex-direction: row;
+  align-items: flex-start;
   margin-bottom: 5px;
   font-weight: bold;
 }
@@ -129,37 +125,12 @@ form#addItemForm div input,
 form#addItemForm div select,
 form#addPartnerForm div input {
   padding: 5px;
-  width: 10px;
-}
-
-form#addSalesForm div input {
-  width: 100%;
 }
 
 form#addItemForm button,
 form#addPartnerForm button,
 form#addSalesForm button,
-form#addSalesItem button {
+form#addSalesItem button,
+form#addPurchaseForm button {
   padding: 5px 10px;
 }
-
-#itemSection form div,
-#partnerSection form div {
-  margin-right: 10px;
-}
-
-#salesSection form div:last-child {
-  margin-right: 0;
-}
-
-#addSalesItem,
-#addSalesForm button[type="submit"] {
-  display: block;
-  margin-top: 10px;
-}
-
-#salesSection.active #addSalesItem,
-#salesSection.active #addSalesForm button[type="submit"] {
-  display: block;
-}
-
