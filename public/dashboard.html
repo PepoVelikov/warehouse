@@ -89,11 +89,13 @@
       <div class="sales-details">  
         <div>
           <label for="customerName">Customer Name</label>
-          <input type="text" id="customerName" name="customerName">
+          <input list="customerNameSugestions" type="text" id="customerName" name="customerName">
+          <datalist id="customerNameSugestions"></datalist>
         </div>
         <div>
           <label for="bulstat">Bulstat</label>
-          <input type="text" id="bulstat" name="bulstat">
+          <input list="bulstatSugestions" type="text" id="bulstat" name="bulstat">
+          <datalist id="bulstatSugestions"></datalist>
         </div>
         <div>
           <label for="address">Address</label>
@@ -101,11 +103,13 @@
         </div>
         <div>
           <label for="email">Email</label>
-          <input type="text" id="email" name="email">
+          <input list="emailSugestions" type="text" id="email" name="email">
+          <datalist id="emailSugestions"></datalist>
         </div>
         <div>
           <label for="phone">Phone</label>
-          <input type="text" id="phone" name="phone">
+          <input list="phoneSugestions" type="text" id="phone" name="phone">
+          <datalist id="phoneSugestions"></datalist>
         </div>
         <div>
           <button type="submit">Add Partner</button>
