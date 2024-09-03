@@ -27,6 +27,50 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 
+  function debounce(func, delay) {
+    let debounceTimer;
+    return function () {
+      const context = this;
+      const args = arguments;
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => func.apply(context, args), delay);
+    };
+  }
+
+  async function fetchSuggestions(query, field) {
+    try {
+      const response = await fetch('/api/partners/search?${field}=${query}', {
+        headers: { 'x-auth-token': token }
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+    }
+  }
+
+  function setupAutocomplete(unputId, field) {
+    const inputElement = document.getElementById(unputId);
+    inputElement.addEventListener('input', debounce(async (e) => {
+      const query = e.target.value;
+      if (query.length > 2) {
+        const suggestions = await fetchSuggestions(query, field);
+        const detalist = document.getElementById(`${field}Suggestions`);
+        detalist.innerHTML = '';
+        suggestions.forEach(suggestion => {
+          const option = document.createElement('option');
+          option.value = suggestion[field];
+          detalist.appendChild(option);
+        });
+      }
+    }, 300));
+  }
+
+  setupAutocomplete('customerName', 'customerName');
+  setupAutocomplete('bulstat', 'bulstat');
+  setupAutocomplete('email', 'email');
+  setupAutocomplete('phone', 'phone');
+});
+
   function hideAllSections() {
     const sections = document.querySelectorAll('.section, .sub-section');
     sections.forEach((section) => {
@@ -315,4 +359,3 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-});
