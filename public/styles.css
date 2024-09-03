@@ -37,8 +37,8 @@ body {
 .sales-items,
 .purchase-details,
 .purchase-item {
-  display: flex;
-  flex-wrap: wrap;
+  display: block;
+  flex-shrink: 1;
   justify-content: space-between;
 }
 
@@ -46,27 +46,26 @@ body {
 .sales-items div,
 .purchase-details div,
 .purchase-item div {
-  flex: 1 1 auto;
   margin-right: 5px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  display: inline-block;
 }
 
 .sales-details label,
 .sales-items label,
 .purchase-details label,
 .purchase-item label {
-  display: block;
-  margin-bottom: 5px;
+  font-weight: bold;
+  margin-bottom: 2px;
 }
 
 .sales-details input,
 .sales-items input,
 .purchase-details input,
 .purchase-item input {
-  flex-grow: 1;
-  width: 140px;
+  width: 130px;
   padding: 5px;
-  margin-right: 0;
+  margin-right: 5px;
 }
 
 h1,
@@ -77,8 +76,9 @@ h2 {
 }
 
 button {
-  margin-top: 10px;
+  margin-top: 5px;
   cursor: pointer;
+  padding: 7px 15px;
 }
 
 button:hover {
@@ -100,17 +100,14 @@ form#addPartnerForm {
 
 form#addItemForm div,
 form#addPartnerForm div {
-  display: block;
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-form#addItemForm div,
-form#addPartnerForm div {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
+form#addItemForm div:last-child,
+form#addPartnerForm div:last-child {
+  align-self: flex-end;
 }
 
 form#addItemForm div label,
