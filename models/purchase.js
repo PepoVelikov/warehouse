@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const purchaseSchema = new mongoose.Schema({
+const PurchaseSchema = new mongoose.Schema({
   purchaseName: { type: String, require: true },
   purchaseBulstat: { type: String, require: true },
   purchaseAddress: { type: String, require: true },
@@ -15,4 +15,4 @@ const purchaseSchema = new mongoose.Schema({
   ],
 });
 
-module.exports = mongoose.model('Purchase', purchaseSchema);
+module.exports = mongoose.model('Purchase', PurchaseSchema);

@@ -13,7 +13,6 @@ router.get('/', auth, async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  
   try {
     const newSale = new Sale(req.body);
     await newSale.save();

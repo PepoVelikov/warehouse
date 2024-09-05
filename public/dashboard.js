@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = 'login.html';
+    console.error('No token found');
+  }
+
   const logoutButton = document.getElementById('logoutButton');
 
   if (logoutButton) {
@@ -7,69 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = 'login.html';
     });
   }
-
-  const token = localStorage.getItem('token');
-
-  if (!token) {
-    window.location.href = 'login.html';
-  } else {
-    fetch('/api/dashboard', {
-      method: 'GET',
-      headers: { 'x-auth-token': token }
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Dashboard data:', data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('An error occurred while fetching dashboard data');
-      });
-  }
-
-  function debounce(func, delay) {
-    let debounceTimer;
-    return function () {
-      const context = this;
-      const args = arguments;
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => func.apply(context, args), delay);
-    };
-  }
-
-  async function fetchSuggestions(query, field) {
-    try {
-      const response = await fetch('/api/partners/search?${field}=${query}', {
-        headers: { 'x-auth-token': token }
-      });
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching suggestions:', error);
-    }
-  }
-
-  function setupAutocomplete(unputId, field) {
-    const inputElement = document.getElementById(unputId);
-    inputElement.addEventListener('input', debounce(async (e) => {
-      const query = e.target.value;
-      if (query.length > 2) {
-        const suggestions = await fetchSuggestions(query, field);
-        const detalist = document.getElementById(`${field}Suggestions`);
-        detalist.innerHTML = '';
-        suggestions.forEach(suggestion => {
-          const option = document.createElement('option');
-          option.value = suggestion[field];
-          detalist.appendChild(option);
-        });
-      }
-    }, 300));
-  }
-
-  setupAutocomplete('customerName', 'customerName');
-  setupAutocomplete('bulstat', 'bulstat');
-  setupAutocomplete('email', 'email');
-  setupAutocomplete('phone', 'phone');
-});
 
   function hideAllSections() {
     const sections = document.querySelectorAll('.section, .sub-section');
@@ -190,14 +133,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const name = document.getElementById('partnerName').value;
       const bulstat = document.getElementById('partnerBulstat').value;
       const address = document.getElementById('partnerAddress').value;
-      const email = document.getElementById('partnerEmail').value;
       const phone = document.getElementById('partnerPhone').value;
+      const email = document.getElementById('partnerEmail').value;
 
       try {
         const response = await fetch('/api/partners', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-          body: JSON.stringify({ name, bulstat, address, email, phone })
+          body: JSON.stringify({ name, bulstat, address, phone, email })
         });
         const newPartner = await response.json();
         if (response.ok) {
@@ -215,25 +158,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  fetchItems();
-  fetchPartners();
-
   const salesForm = document.getElementById('addSalesForm');
   const addSalesItemButton = document.getElementById('addSalesItem');
 
   if (salesForm) {
     salesForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const customerName = document.getElementById('salesName').value;
-      const customerBulstat = document.getElementById('salesBulstat').value;
-      const customerAddress = document.getElementById('salesAddress').value;
-      const customerEmail = document.getElementById('salesEmail').value;
-      const customerPhone = document.getElementById('salesPhone').value;
+      const customerName = document.getElementById('name').value;
+      const customerBulstat = document.getElementById('bulstat').value;
+      const customerAddress = document.getElementById('address').value;
+      const customerEmail = document.getElementById('email').value;
+      const customerPhone = document.getElementById('phone').value;
 
-      const items = Array.from(document.querySelectorAll('.sales-item')).map((item) => ({
-        itemName: item.querySelector('.salesItemName').value,
-        itemQuantity: item.querySelector('.salesItemQuantity').value,
-        itemPrice: item.querySelector('.salesItemPrice').value
+      const items = Array.from(document.querySelectorAll('.sales-items')).map((item) => ({
+        itemName: item.querySelector('#itemName').value,
+        itemQuantity: item.querySelector('#quantity').value,
+        itemPrice: item.querySelector('#price').value
       }));
 
       const saleData = { customerName, customerBulstat, customerAddress, customerEmail, customerPhone, items };
@@ -243,17 +183,17 @@ document.addEventListener('DOMContentLoaded', () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
           body: JSON.stringify(saleData)
-      });
-      console.log('Response status:', response.status);
-      console.log('Response data:', await response.json());
-      
+        });
+        console.log('Response status:', response.status);
+        console.log('Response data:', await response.json());
+
         if (response.ok) {
           console.log('Sale added successfully');
           salesForm.reset();
         } else {
           const errorResponse = await response.json();
-          console.error('Error adding sale:', newSale);
-          alert('Error adding sale', newSale);
+          console.error('Error adding sale:', errorResponse);
+          alert('Error adding sale', errorResponse);
         }
       } catch (error) {
         console.error('Error adding sale:', error);
@@ -263,26 +203,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (addSalesItemButton) {
     addSalesItemButton.addEventListener('click', () => {
-      const itemName = document.querySelector('.salesItemName').value;
-      const itemQuantity = document.querySelector('.salesItemQuantity').value;
-      const itemPrice = document.querySelector('.salesItemPrice').value;
+      const itemName = document.querySelector('#itemName').value;
+      const itemQuantity = document.querySelector('#quantity').value;
+      const itemPrice = document.querySelector('#price').value;
 
       if (itemName && itemQuantity && itemPrice) {
-        const salesItemContainer = document.getElementById('salesItem');
+        const salesItemContainer = document.getElementById('salesSection');
         const newItemDiv = document.createElement('div');
         newItemDiv.classList.add('sales-item');
 
         newItemDiv.innerHTML = `
-          <input type="text" class="salesItemName" value="${itemName}" readonly>
-          <input type="number" class="salesItemQuantity" value="${itemQuantity}" readonly>
-          <input type="number" class="salesItemPrice" value="${itemPrice}" readonly>
-        `;
+        <input type="text" id="itemName" value="${itemName}" readonly>
+        <input type="number" id="quantity" value="${itemQuantity}" readonly>
+        <input type="number" id="price" value="${itemPrice}" readonly>
+      `;
 
         salesItemContainer.appendChild(newItemDiv);
 
-        document.querySelector('.salesItemName').value = '';
-        document.querySelector('.salesItemQuantity').value = '';
-        document.querySelector('.salesItemPrice').value = '';
+        document.querySelector('#itemName').value = '';
+        document.querySelector('#quantity').value = '';
+        document.querySelector('#price').value = '';
       } else {
         alert('Please fill in all fields');
       }
@@ -300,11 +240,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const purchaseAddress = document.getElementById('purchaseAddress').value;
       const purchaseEmail = document.getElementById('purchaseEmail').value;
       const purchasePhone = document.getElementById('purchasePhone').value;
-      
+
       const items = Array.from(document.querySelectorAll('.purchase-item')).map((item) => ({
-        itemName: item.querySelector('.purchaseItemName').value,
-        itemQuantity: item.querySelector('.purchaseItemQuantity').value,
-        itemPrice: item.querySelector('.purchaseItemPrice').value
+        itemName: item.querySelector('#itemName').value,
+        itemQuantity: item.querySelector('#quantity').value,
+        itemPrice: item.querySelector('#price').value
       }));
 
       const purchaseData = { purchaseName, purchaseBulstat, purchaseAddress, purchaseEmail, purchasePhone, items };
@@ -317,14 +257,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         console.log('Response status:', response.status);
         console.log('Response data:', await response.json());
-        
+
         if (response.ok) {
           console.log('Purchase added successfully');
           purchaseForm.reset();
         } else {
           const errorResponse = await response.json();
-          console.error('Error adding purchase:', newPurchase);
-          alert('Error adding purchase:', newPurchase);
+          console.error('Error adding purchase:', errorResponse);
+          alert('Error adding purchase:', errorResponse);
         }
       } catch (error) {
         console.error('Error adding purchase:', error);
@@ -334,9 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (addPurchaseItemButton) {
     addPurchaseItemButton.addEventListener('click', () => {
-      const itemName = document.querySelector('.purchaseItemName').value;
-      const itemQuantity = document.querySelector('.purchaseItemQuantity').value;
-      const itemPrice = document.querySelector('.purchaseItemPrice').value;
+      const itemName = document.querySelector('#itemName').value;
+      const itemQuantity = document.querySelector('#quantity').value;
+      const itemPrice = document.querySelector('#price').value;
 
       if (itemName && itemQuantity && itemPrice) {
         const purchaseItemContainer = document.getElementById('purchaseItem');
@@ -344,18 +284,22 @@ document.addEventListener('DOMContentLoaded', () => {
         newItemDiv.classList.add('purchase-item');
 
         newItemDiv.innerHTML = `
-          <input type="text" class="purchaseItemName" value="${itemName}" readonly>
-          <input type="number" class="purchaseItemQuantity" value="${itemQuantity}" readonly>
-          <input type="number" class="purchaseItemPrice" value="${itemPrice}" readonly>
-        `;
+        <input type="text" id="itemName" value="${itemName}" readonly>
+        <input type="number" id="quantity" value="${itemQuantity}" readonly>
+        <input type="number" id="price" value="${itemPrice}" readonly>
+      `;
 
         purchaseItemContainer.appendChild(newItemDiv);
 
-        document.querySelector('.purchaseItemName').value = '';
-        document.querySelector('.purchaseItemQuantity').value = '';
-        document.querySelector('.purchaseItemPrice').value = '';
+        document.querySelector('#itemName').value = '';
+        document.querySelector('#quantity').value = '';
+        document.querySelector('#price').value = '';
       } else {
         alert('Please fill in all fields');
       }
     });
   }
+
+  fetchItems(token);
+  fetchPartners(token);
+});
