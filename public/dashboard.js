@@ -122,10 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (addItemForm) {
     addItemForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('name').value;
+      const name = document.getElementById('itemName').value;
       const unit = document.getElementById('itemUnit').value;
       const quantity = document.getElementById('itemQuantity').value;
-      const price = document.getElementById('price').value;
+      const price = document.getElementById('itemPrice').value;
 
       try {
         const response = await fetch('/api/items', {
