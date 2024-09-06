@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const PartnerShema = new mongoose.Schema({
+const PartnerSchema = new mongoose.Schema({
   partnerNumber: { type: Number, unique: true, index: true},
   name: { type: String, unique: true, require: true},
   bulstat : { type: String, unique: true, require: true},
@@ -9,4 +9,4 @@ const PartnerShema = new mongoose.Schema({
   email: { type: String, unique: true, require: true}
 });
 
-module.exports = mongoose.model('Partner', PartnerShema);
+module.exports = mongoose.model('Partner', PartnerSchema);
