@@ -58,10 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const itemsList = document.getElementById('itemsList');
-  const addItemForm = document.getElementById('addItemForm');
-  const partnersList = document.getElementById('partnersList');
-  const addPartnerForm = document.getElementById('addPartnerForm');
+  const salesForm = document.getElementById('salesForm');
 
   const fetchItems = async () => {
     try {
@@ -69,12 +66,23 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'x-auth-token': token }
       });
       const items = await response.json();
-      itemsList.innerHTML = '';
-      items.forEach((item) => {
-        const li = document.createElement('li');
-        li.textContent = `${item.name} - ${item.unit} - ${item.quantity} - ${item.price} BGN`;
-        itemsList.appendChild(li);
-      });
+      const itemsList = document.getElementById('itemsList');
+      const itemsDropdown = document.getElementById('itemsDropdown');
+
+      if (itemsList && itemsDropdown) {
+        itemsList.innerHTML = '';
+        itemsDropdown.innerHTML = '';
+        items.forEach((item) => {
+          const li = document.createElement('li');
+          li.textContent = `${item.name} - ${item.unit} - ${item.quantity} - ${item.price} BGN`;
+          itemsList.appendChild(li);
+
+          const option = document.createElement('option');
+          option.value = item._id;
+          option.textContent = `${item.name} (${item.quantity} налични)`;
+          itemsDropdown.appendChild(option);
+        });
+      }
     } catch (error) {
       console.error('Error fetching items:', error);
     }
@@ -86,21 +94,35 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'x-auth-token': token }
       });
       const partners = await response.json();
-      partnersList.innerHTML = '';
-      partners.forEach((partner) => {
-        const li = document.createElement('li');
-        li.textContent = `${partner.name} - ${partner.bulstat} - ${partner.address} - ${partner.phone} - ${partner.email}`;
-        partnersList.appendChild(li);
-      });
+      const partnersList = document.getElementById('partnersList');
+      const partnersDropdown = document.getElementById('partnersDropdown');
+
+      if (partnersList && partnersDropdown) {
+        partnersList.innerHTML = '';
+        partnersDropdown.innerHTML = '';
+        partners.forEach((partner) => {
+          const li = document.createElement('li');
+          li.textContent = `${partner.name} - ${partner.bulstat} - ${partner.address} - ${partner.phone} - ${partner.email}`;
+          partnersList.appendChild(li);
+
+          const option = document.createElement('option');
+          option.value = partner._id;
+          option.textContent = `${partner.name}`;
+          partnersDropdown.appendChild(option);
+        });
+      }
     } catch (error) {
       console.error('Error fetching partners:', error);
     }
   };
 
+  const addItemForm = document.getElementById('addItemForm');
+  const addPartnerForm = document.getElementById('addPartnerForm');
+
   if (addItemForm) {
     addItemForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('itemName').value;
+      const name = document.getElementById('name').value;
       const unit = document.getElementById('itemUnit').value;
       const quantity = document.getElementById('itemQuantity').value;
       const price = document.getElementById('price').value;
@@ -158,25 +180,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const salesForm = document.getElementById('addSalesForm');
   const addSalesItemButton = document.getElementById('addSalesItem');
 
   if (salesForm) {
     salesForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const customerName = document.getElementById('name').value;
-      const customerBulstat = document.getElementById('bulstat').value;
-      const customerAddress = document.getElementById('address').value;
-      const customerEmail = document.getElementById('email').value;
-      const customerPhone = document.getElementById('phone').value;
+
+      const selectedPartner = document.getElementById('partnersDropdown').value;
+      const selectedItem = document.getElementById('itemsDropdown').value;
+      // const customerName = document.getElementById('name').value;
+      // const customerBulstat = document.getElementById('bulstat').value;
+      // const customerAddress = document.getElementById('address').value;
+      // const customerEmail = document.getElementById('email').value;
+      // const customerPhone = document.getElementById('phone').value;
+      const itemQuantity = document.getElementById('quantity').value;
+      const itemPrice = document.getElementById('price').value;
 
       const items = Array.from(document.querySelectorAll('.sales-items')).map((item) => ({
-        itemName: item.querySelector('#itemName').value,
+        itemName: item.querySelector('#name').value,
         itemQuantity: item.querySelector('#quantity').value,
         itemPrice: item.querySelector('#price').value
       }));
 
-      const saleData = { customerName, customerBulstat, customerAddress, customerEmail, customerPhone, items };
+      const saleData = { 
+        selectedPartner,
+        selectedItem,
+        itemQuantity,
+        itemPrice,
+        items
+      };
 
       try {
         const response = await fetch('/api/sales', {
@@ -187,13 +219,13 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Response status:', response.status);
         console.log('Response data:', await response.json());
 
+        const data = await response.json();
         if (response.ok) {
           console.log('Sale added successfully');
           salesForm.reset();
+          fetchItems();
         } else {
-          const errorResponse = await response.json();
-          console.error('Error adding sale:', errorResponse);
-          alert('Error adding sale', errorResponse);
+          alert(`Error: ${data.msg}`);
         }
       } catch (error) {
         console.error('Error adding sale:', error);
@@ -203,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (addSalesItemButton) {
     addSalesItemButton.addEventListener('click', () => {
-      const itemName = document.querySelector('#itemName').value;
+      const itemName = document.querySelector('#name').value;
       const itemQuantity = document.querySelector('#quantity').value;
       const itemPrice = document.querySelector('#price').value;
 
@@ -213,14 +245,14 @@ document.addEventListener('DOMContentLoaded', () => {
         newItemDiv.classList.add('sales-item');
 
         newItemDiv.innerHTML = `
-        <input type="text" id="itemName" value="${itemName}" readonly>
+        <input type="text" id="name" value="${itemName}" readonly>
         <input type="number" id="quantity" value="${itemQuantity}" readonly>
         <input type="number" id="price" value="${itemPrice}" readonly>
       `;
 
         salesItemContainer.appendChild(newItemDiv);
 
-        document.querySelector('#itemName').value = '';
+        document.querySelector('#name').value = '';
         document.querySelector('#quantity').value = '';
         document.querySelector('#price').value = '';
       } else {
@@ -242,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const purchasePhone = document.getElementById('purchasePhone').value;
 
       const items = Array.from(document.querySelectorAll('.purchase-item')).map((item) => ({
-        itemName: item.querySelector('#itemName').value,
+        itemName: item.querySelector('#name').value,
         itemQuantity: item.querySelector('#quantity').value,
         itemPrice: item.querySelector('#price').value
       }));
@@ -274,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (addPurchaseItemButton) {
     addPurchaseItemButton.addEventListener('click', () => {
-      const itemName = document.querySelector('#itemName').value;
+      const itemName = document.querySelector('#name').value;
       const itemQuantity = document.querySelector('#quantity').value;
       const itemPrice = document.querySelector('#price').value;
 
@@ -284,14 +316,14 @@ document.addEventListener('DOMContentLoaded', () => {
         newItemDiv.classList.add('purchase-item');
 
         newItemDiv.innerHTML = `
-        <input type="text" id="itemName" value="${itemName}" readonly>
+        <input type="text" id="name" value="${itemName}" readonly>
         <input type="number" id="quantity" value="${itemQuantity}" readonly>
         <input type="number" id="price" value="${itemPrice}" readonly>
       `;
 
         purchaseItemContainer.appendChild(newItemDiv);
 
-        document.querySelector('#itemName').value = '';
+        document.querySelector('#name').value = '';
         document.querySelector('#quantity').value = '';
         document.querySelector('#price').value = '';
       } else {
