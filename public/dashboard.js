@@ -58,8 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const salesForm = document.getElementById('salesForm');
-
   const fetchItems = async () => {
     try {
       const response = await fetch('/api/items', {
@@ -94,17 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'x-auth-token': token }
       });
       const partners = await response.json();
-      const partnersList = document.getElementById('partnersList');
       const partnersDropdown = document.getElementById('partnersDropdown');
 
-      if (partnersList && partnersDropdown) {
-        partnersList.innerHTML = '';
-        partnersDropdown.innerHTML = '';
+      if (partnersDropdown) {
+        partnersDropdown.innerHTML = '<option value="">-- Select Partner --</option>';
         partners.forEach((partner) => {
-          const li = document.createElement('li');
-          li.textContent = `${partner.name} - ${partner.bulstat} - ${partner.address} - ${partner.phone} - ${partner.email}`;
-          partnersList.appendChild(li);
-
           const option = document.createElement('option');
           option.value = partner._id;
           option.textContent = `${partner.name}`;
@@ -182,19 +174,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const addSalesItemButton = document.getElementById('addSalesItem');
 
+  const salesForm = document.getElementById('addSalesForm');
   if (salesForm) {
     salesForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const selectedPartner = document.getElementById('partnersDropdown').value;
-      const selectedItem = document.getElementById('itemsDropdown').value;
-      // const customerName = document.getElementById('name').value;
-      // const customerBulstat = document.getElementById('bulstat').value;
-      // const customerAddress = document.getElementById('address').value;
-      // const customerEmail = document.getElementById('email').value;
-      // const customerPhone = document.getElementById('phone').value;
-      const itemQuantity = document.getElementById('quantity').value;
-      const itemPrice = document.getElementById('price').value;
+      if (!selectedPartner) {
+        alert('Please select a partner');
+        return;
+      }
 
       const items = Array.from(document.querySelectorAll('.sales-items')).map((item) => ({
         itemName: item.querySelector('#name').value,
@@ -202,13 +191,12 @@ document.addEventListener('DOMContentLoaded', () => {
         itemPrice: item.querySelector('#price').value
       }));
 
-      const saleData = { 
-        selectedPartner,
-        selectedItem,
-        itemQuantity,
-        itemPrice,
-        items
-      };
+      if (items.length === 0) {
+        alert('Please add at least one item');
+        return;
+      }
+      
+      const saleData = { selectedPartner, items };
 
       try {
         const response = await fetch('/api/sales', {
@@ -216,19 +204,19 @@ document.addEventListener('DOMContentLoaded', () => {
           headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
           body: JSON.stringify(saleData)
         });
-        console.log('Response status:', response.status);
-        console.log('Response data:', await response.json());
 
-        const data = await response.json();
-        if (response.ok) {
-          console.log('Sale added successfully');
-          salesForm.reset();
-          fetchItems();
-        } else {
-          alert(`Error: ${data.msg}`);
+        if (!response.ok) {
+          const errorResponse = await response.json();
+          alert(`Error: ${errorResponse.msg}`);
+          return;
         }
+
+        alert('Sale added successfully');
+        salesForm.reset();
+        fetchItems();
       } catch (error) {
         console.error('Error adding sale:', error);
+        alert('An error occurred while adding the sale');
       }
     });
   }
@@ -332,6 +320,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  fetchItems(token);
-  fetchPartners(token);
+  fetchItems();
+  fetchPartners();
 });
