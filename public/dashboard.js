@@ -319,7 +319,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  fetchItems();
-  fetchPartners();
 });
