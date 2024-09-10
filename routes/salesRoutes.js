@@ -14,30 +14,34 @@ router.get('/', auth, async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { selectedPartner, items } = req.body;
+  const { partnerId, items } = req.body;
+
+  if (!partnerId || !items || items.length === 0) {
+    return res.status(400).send('Missing required fields');
+  }
 
   try {
-    const newSale = new Sale({ selectedPartner, items });
+    const newSale = new Sale({ partnerId, items });
     await newSale.save();
-    
-    for (let item of items) {
-      const currentItem = await Item.findOne({ name: item.itemName });
-      if (!currentItem) {
-        return res.status(404).send(`Item ${item.itemName} not found`);
+
+    for (let i = 0; i < items.length; i++) {
+      const saleItem = items[i];
+
+      const item = await Item.findOne({ name: saleItem.itemName });
+      if (item) {
+        item.quantity -= saleItem.itemQuantity;
+
+        if (item.quantity < 0) {
+          return res.status(400).send(`Not enough ${saleItem.itemName} in stock`);
+        }
+        await item.save();
       }
-      
-      if (currentItem.quantity < item.itemQuantity) {
-        return res.status(400).send(`Insufficient quantity for item ${item.itemName}`);
-      }
-      
-      currentItem.quantity -= item.itemQuantity;
-      await currentItem.save();
     }
 
     res.status(201).json(newSale);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ msg: 'Error adding sale', error });
   }
 });
 

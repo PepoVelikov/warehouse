@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const SaleSchema = new mongoose.Schema({
-  customerName: { type: String, require: true },
-  customerBulstat: { type: String, require: true },
-  customerAddress: { type: String, require: true },
-  customerEmail: { type: String, require: true },
-  customerPhone: { type: String, require: true },
+const saleSchema = new Schema({
+  partnerId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Partner',
+    require: true
+  },
   items: [
     {
       itemName: { type: String, require: true },
@@ -13,6 +14,7 @@ const SaleSchema = new mongoose.Schema({
       itemPrice: { type: Number, require: true }
     }
   ],
+  date: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Sale', SaleSchema);
+module.exports = mongoose.model('Sale', saleSchema);

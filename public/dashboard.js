@@ -108,6 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  fetchPartners();
+
   const addItemForm = document.getElementById('addItemForm');
   const addPartnerForm = document.getElementById('addPartnerForm');
 
@@ -172,81 +174,162 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const addSalesItemButton = document.getElementById('addSalesItem');
+    const addSalesItemButton = document.getElementById('addSalesItem');
+    const salesItemContainer = document.querySelector('.sales-items-list');
 
-  const salesForm = document.getElementById('addSalesForm');
-  if (salesForm) {
-    salesForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    // Function to add a new item to the sales list
+    if (addSalesItemButton && salesItemContainer) {
+      addSalesItemButton.addEventListener('click', () => {
+        const itemName = document.getElementById('name').value;
+        const itemQuantity = document.getElementById('quantity').value;
+        const itemPrice = document.getElementById('price').value;
 
-      const selectedPartner = document.getElementById('partnersDropdown').value;
-      if (!selectedPartner) {
-        alert('Please select a partner');
-        return;
-      }
-
-      const items = Array.from(document.querySelectorAll('.sales-items')).map((item) => ({
-        itemName: item.querySelector('#name').value,
-        itemQuantity: item.querySelector('#quantity').value,
-        itemPrice: item.querySelector('#price').value
-      }));
-
-      if (items.length === 0) {
-        alert('Please add at least one item');
-        return;
-      }
-      
-      const saleData = { selectedPartner, items };
-
-      try {
-        const response = await fetch('/api/sales', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-          body: JSON.stringify(saleData)
-        });
-
-        if (!response.ok) {
-          const errorResponse = await response.json();
-          alert(`Error: ${errorResponse.msg}`);
+        // Ensure all fields are filled
+        if (!itemName || !itemQuantity || !itemPrice) {
+          alert('Please fill in all fields');
           return;
         }
 
-        alert('Sale added successfully');
-        salesForm.reset();
-        fetchItems();
-      } catch (error) {
-        console.error('Error adding sale:', error);
-        alert('An error occurred while adding the sale');
-      }
-    });
+        // Create a new item and add it to the container
+        const newItem = document.createElement('div');
+        newItem.classList.add('sales-item');
+        newItem.innerHTML = `
+          <p><strong>Name:</strong> ${itemName}</p>
+          <p><strong>Quantity:</strong> ${itemQuantity}</p>
+          <p><strong>Price:</strong> ${itemPrice}</p>
+        `;
+        salesItemContainer.appendChild(newItem);
+
+        // Clear the form fields
+        document.getElementById('name').value = '';
+        document.getElementById('quantity').value = '';
+        document.getElementById('price').value = '';
+      });
+    }
+
+    const addPartnerButton = document.getElementById('addPartnerToList');
+    const partnerListContainer = document.querySelector('.partner-list');
+
+    if (addPartnerButton && partnerListContainer) {
+      addPartnerButton.addEventListener('click', () => {
+        const selectedPartner = document.getElementById('partnersDropdown').value;
+        const selectedPartnerText = document.getElementById('partnersDropdown').selectedOptions[0].text;
+
+        if (partnerListContainer.children.length > 1) {
+          alert('You can only select one partner');
+          return;
+        }
+
+        if (!selectedPartner) {
+          alert('Please select a partner');
+          return;
+        }
+
+        const newPartner = document.createElement('div');
+        newPartner.classList.add('partner-item');
+        newPartner.innerHTML = `
+          <p><strong>Name:</strong> ${selectedPartnerText}</p>
+        `;
+        partnerListContainer.appendChild(newPartner);
+      });
+    }
+  
+    const salesForm = document.getElementById('addSalesForm');
+
+    // Function to handle the sale submission
+    if (salesForm) {
+      salesForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const selectedPartner = document.getElementById('partnersDropdown').value;
+        if (!selectedPartner) {
+          alert('Please select a partner');
+          return;
+        }
+
+        const items = [];
+        const itemElements = document.querySelectorAll('.sales-item');
+
+        itemElements.forEach((item) => {
+          const itemNameElement = item.querySelector('p:nth-child(1)');
+          const itemQuantityelement = item.querySelector('p:nth-child(2)');
+          const itemPriceElement = item.querySelector('p:nth-child(3)');
+
+          const itemName = itemNameElement.textContent.replace('Name:', '').trim();
+          const itemQuantity = itemQuantityelement.textContent.replace('Quantity:', '').trim();
+          const itemPrice = itemPriceElement.textContent.replace('Price:', '').trim();
+
+          if (!itemName || !itemQuantity || !itemPrice) {
+            alert('One or more fields are missing in the added items.');
+            return;
+          }
+
+          items.push({
+            itemName,
+            itemQuantity: Number(itemQuantity),
+            itemPrice: Number(itemPrice)
+          });
+        });
+
+        if (items.length === 0) {
+          alert('Please add at least one item');
+          return;
+        }
+
+        const saleData = { partnerId: selectedPartner, items };
+
+        try {
+          const response = await fetch('/api/sales', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+            body: JSON.stringify(saleData)
+          });
+
+          if (!response.ok) {
+            const errorResponse = await response.json();
+            alert(`Error: ${errorResponse.msg}`);
+            return;
+          }
+
+          alert('Sale added successfully');
+          salesForm.reset();
+          salesItemContainer.innerHTML = '';
+          partnerListContainer.innerHTML = '';
+        } catch (error) {
+          console.error('Error adding sale:', error);
+          alert('An error occurred while adding the sale');
+        }
+      });
+    }
+
+    // Fetch items and partners
+    fetchItems();
+    fetchPartners();
+  });
+  
+
+  // Clear the list of added sales items
+  function clearSalesItems() {
+    const salesItemsList = document.querySelector('.sales-items-list');
+    salesItemsList.innerHTML = '';
   }
 
-  if (addSalesItemButton) {
-    addSalesItemButton.addEventListener('click', () => {
-      const itemName = document.querySelector('#name').value;
-      const itemQuantity = document.querySelector('#quantity').value;
-      const itemPrice = document.querySelector('#price').value;
 
-      if (itemName && itemQuantity && itemPrice) {
-        const salesItemContainer = document.getElementById('salesSection');
-        const newItemDiv = document.createElement('div');
-        newItemDiv.classList.add('sales-item');
-
-        newItemDiv.innerHTML = `
-        <input type="text" id="name" value="${itemName}" readonly>
-        <input type="number" id="quantity" value="${itemQuantity}" readonly>
-        <input type="number" id="price" value="${itemPrice}" readonly>
-      `;
-
-        salesItemContainer.appendChild(newItemDiv);
-
-        document.querySelector('#name').value = '';
-        document.querySelector('#quantity').value = '';
-        document.querySelector('#price').value = '';
-      } else {
-        alert('Please fill in all fields');
+  function getPurchaseQuantity(itemName) {
+    const purchases = document.querySelectorAll('.purchase-item');
+    let purchaseQuantity = 0;
+    purchases.forEach((purchase) => {
+      const purchaseItemName = purchase.querySelector('#name').value;
+      if (purchaseItemName === itemName) {
+        purchaseQuantity += Number(purchase.querySelector('#quantity').value);
       }
     });
+    return totalQuantity;
+  }
+
+  function clearSalesItems() {
+    const salesItemsList = document.querySelector('sales-items-list');
+    salesItemsList.innerHTML = '';
   }
 
   const purchaseForm = document.getElementById('addPurchaseForm');
@@ -319,4 +402,3 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-});

@@ -43,18 +43,17 @@ router.post('/', auth, async (req, res) => {
 });
 
 router.put('/:id', auth, async (req, res) => {
-  const { name, bulstat, address, phone, email } = req.body;
-  const partnerFields = {};
-  if (name) partnerFields.name = name;
-  if (bulstat) partnerFields.bulstat = bulstat;
-  if (address) partnerFields.address = address;
-  if (phone) partnerFields.phone = phone;
-  if (email) partnerFields.email = email;
-
   try {
-    let partner = await Partner.findById(req.params.id);
-
+    const partner = await Partner.findById(req.params.id);
     if (!partner) return res.status(404).json({ msg: 'Partner not found' });
+
+    const { name, bulstat, address, phone, email } = req.body;
+    const partnerFields = {};
+    if (name) partnerFields.name = name;
+    if (bulstat) partnerFields.bulstat = bulstat;
+    if (address) partnerFields.address = address;
+    if (phone) partnerFields.phone = phone;
+    if (email) partnerFields.email = email;
 
     partner = await Partner.findByIdAndUpdate(
       req.params.id, 
