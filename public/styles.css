@@ -136,7 +136,7 @@ form#addPurchaseForm button {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  width: 100%;
+  width: 200px;
   max-height: 150px;
   overflow-y: auto;
   border: 1px solid #ccc;
