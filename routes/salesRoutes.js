@@ -4,12 +4,14 @@ const auth = require('../middleware/auth');
 const Sale = require('../models/sale');
 const Item = require('../models/item');
 
-router.get('/', auth, async (req, res) => {
+router.get('/search-items', auth, async (req, res) => {
+  const searchName = req.query.name;
+
   try {
-    const sales = await Sale.find();
-    res.json(sales);
+    const items = await Item.find({ name: new RegExp(searchName, 'i') });
+    res.json(items);
   } catch (err) {
-    res.status(500).send('Server error');
+    res.status(500).send({ msg: 'Error fetching items' });
   }
 });
 

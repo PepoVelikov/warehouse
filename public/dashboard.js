@@ -177,20 +177,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const addSalesItemButton = document.getElementById('addSalesItem');
     const salesItemContainer = document.querySelector('.sales-items-list');
 
-    // Function to add a new item to the sales list
     if (addSalesItemButton && salesItemContainer) {
       addSalesItemButton.addEventListener('click', () => {
         const itemName = document.getElementById('name').value;
         const itemQuantity = document.getElementById('quantity').value;
         const itemPrice = document.getElementById('price').value;
 
-        // Ensure all fields are filled
         if (!itemName || !itemQuantity || !itemPrice) {
           alert('Please fill in all fields');
           return;
         }
 
-        // Create a new item and add it to the container
         const newItem = document.createElement('div');
         newItem.classList.add('sales-item');
         newItem.innerHTML = `
@@ -200,12 +197,57 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         salesItemContainer.appendChild(newItem);
 
-        // Clear the form fields
         document.getElementById('name').value = '';
         document.getElementById('quantity').value = '';
         document.getElementById('price').value = '';
       });
     }
+
+    let selectedItem = null;
+
+    const itemInput = document.getElementById('name');
+    const suggestionList = document.createElement('ul');
+    suggestionList.id = 'suggestion';
+    itemInput.parentElement.appendChild(suggestionList);
+
+    itemInput.addEventListener('input', async () => {
+      const query = itemInput.value;
+
+      if (query.length >= 2) {
+        try {
+          const response = await fetch(`/api/sales/search-items?name=${encodeURIComponent(query)}`, {
+            headers: { 'x-auth-token': token }
+          });
+          const items = await response.json();
+          suggestionList.innerHTML = '';
+
+          if (items.length > 0) {
+            items.forEach(item => {
+              const li = document.createElement('li');
+              li.textContent = `${item.name} ${item.quantity} (${item.unit} in stock)`;
+              li.addEventListener('click', () => {
+                itemInput.value = item.name;
+                document.getElementById('quantity').value = item.quantity;
+                document.getElementById('price').value = item.price;
+                selectedItem = item;
+                suggestionList.innerHTML = '';
+              });
+              suggestionList.appendChild(li);
+            });
+          } else {
+            const li = document.createElement('li');
+            li.textContent = 'No items found';
+            suggestionList.appendChild(li);
+            selectedItem = null;
+          }
+        } catch (error) {
+          console.error('Error fetching items:', error);
+        }
+      } else {
+        suggestionList.innerHTML = '';
+        selectedItem = null;
+      }
+    });
 
     const addPartnerButton = document.getElementById('addPartnerToList');
     const partnerListContainer = document.querySelector('.partner-list');
@@ -236,7 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
     const salesForm = document.getElementById('addSalesForm');
 
-    // Function to handle the sale submission
     if (salesForm) {
       salesForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -302,18 +343,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Fetch items and partners
     fetchItems();
     fetchPartners();
   });
   
-
-  // Clear the list of added sales items
   function clearSalesItems() {
     const salesItemsList = document.querySelector('.sales-items-list');
     salesItemsList.innerHTML = '';
   }
-
 
   function getPurchaseQuantity(itemName) {
     const purchases = document.querySelectorAll('.purchase-item');
