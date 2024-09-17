@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const PurchaseSchema = new mongoose.Schema({
-  purchaseName: { type: String, require: true },
-  purchaseBulstat: { type: String, require: true },
-  purchaseAddress: { type: String, require: true },
-  purchaseEmail: { type: String, require: true },
-  purchasePhone: { type: String, require: true },
+const PurchaseSchema = new Schema({
+  partnerId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Partner',
+    require: true
+  },
   items: [
     {
       itemName: { type: String, require: true },
@@ -13,6 +14,7 @@ const PurchaseSchema = new mongoose.Schema({
       itemPrice: { type: Number, require: true }
     }
   ],
+  date: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Purchase', PurchaseSchema);

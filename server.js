@@ -2,6 +2,7 @@ const express = require('express');
 const connectDB = require('./config/db');
 const path = require('path');
 const app = express();
+const cors = require('cors');
 
 connectDB();
 
@@ -17,6 +18,7 @@ app.use('/api/dashboard', (req, res) => {
   res.json({ message : 'Welcome to the Dashboard' })
 });
 
+app.use(cors());
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/items', require('./routes/itemRoutes'));
 app.use('/api/partners', require('./routes/partnerRoutes'));

@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (purchaseButton) {
     purchaseButton.addEventListener('click', () => {
       showSection('purchaseSection');
+      fetchPartners();
     });
   }
 
@@ -101,6 +102,17 @@ document.addEventListener('DOMContentLoaded', () => {
           option.value = partner._id;
           option.textContent = `${partner.name}`;
           partnersDropdown.appendChild(option);
+        });
+      }
+
+      const purchasePartnersDropdown = document.getElementById('purchasePartnersDropdown');
+      if (purchasePartnersDropdown) {
+        purchasePartnersDropdown.innerHTML = '<option value="">-- Select Supplier --</option>';
+        partners.forEach((partner) => {
+          const option = document.createElement('option');
+          option.value = partner._id;
+          option.textContent = `${partner.name}`;
+          purchasePartnersDropdown.appendChild(option);
         });
       }
     } catch (error) {
@@ -174,268 +186,381 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-    const addSalesItemButton = document.getElementById('addSalesItem');
-    const salesItemContainer = document.querySelector('.sales-items-list');
+  const addSalesItemButton = document.getElementById('addSalesItem');
+  const salesItemContainer = document.querySelector('.sales-items-list');
 
-    if (addSalesItemButton && salesItemContainer) {
-      addSalesItemButton.addEventListener('click', () => {
-        const itemName = document.getElementById('name').value;
-        const itemQuantity = document.getElementById('quantity').value;
-        const itemPrice = document.getElementById('price').value;
+  if (addSalesItemButton && salesItemContainer) {
+    addSalesItemButton.addEventListener('click', () => {
+      const itemName = document.getElementById('name').value;
+      const itemQuantity = document.getElementById('quantity').value;
+      const itemPrice = document.getElementById('price').value;
 
-        if (!itemName || !itemQuantity || !itemPrice) {
-          alert('Please fill in all fields');
-          return;
-        }
+      if (!itemName || !itemQuantity || !itemPrice) {
+        alert('Please fill in all fields');
+        return;
+      }
 
-        const newItem = document.createElement('div');
-        newItem.classList.add('sales-item');
-        newItem.innerHTML = `
+      const newItem = document.createElement('div');
+      newItem.classList.add('sales-item');
+      newItem.innerHTML = `
           <p><strong>Name:</strong> ${itemName}</p>
           <p><strong>Quantity:</strong> ${itemQuantity}</p>
           <p><strong>Price:</strong> ${itemPrice}</p>
         `;
-        salesItemContainer.appendChild(newItem);
+      salesItemContainer.appendChild(newItem);
 
-        document.getElementById('name').value = '';
-        document.getElementById('quantity').value = '';
-        document.getElementById('price').value = '';
-      });
-    }
-
-    let selectedItem = null;
-
-    const itemInput = document.getElementById('name');
-    const suggestionList = document.createElement('ul');
-    suggestionList.id = 'suggestion';
-    itemInput.parentElement.appendChild(suggestionList);
-
-    itemInput.addEventListener('input', async () => {
-      const query = itemInput.value;
-
-      if (query.length >= 2) {
-        try {
-          const response = await fetch(`/api/sales/search-items?name=${encodeURIComponent(query)}`, {
-            headers: { 'x-auth-token': token }
-          });
-          const items = await response.json();
-          suggestionList.innerHTML = '';
-
-          if (items.length > 0) {
-            items.forEach(item => {
-              const li = document.createElement('li');
-              li.textContent = `${item.name} ${item.quantity} (${item.unit} in stock)`;
-              li.addEventListener('click', () => {
-                itemInput.value = item.name;
-                document.getElementById('quantity').value = item.quantity;
-                document.getElementById('price').value = item.price;
-                selectedItem = item;
-                suggestionList.innerHTML = '';
-              });
-              suggestionList.appendChild(li);
-            });
-          } else {
-            const li = document.createElement('li');
-            li.textContent = 'No items found';
-            suggestionList.appendChild(li);
-            selectedItem = null;
-          }
-        } catch (error) {
-          console.error('Error fetching items:', error);
-        }
-      } else {
-        suggestionList.innerHTML = '';
-        selectedItem = null;
-      }
+      document.getElementById('name').value = '';
+      document.getElementById('quantity').value = '';
+      document.getElementById('price').value = '';
     });
+  }
 
-    const addPartnerButton = document.getElementById('addPartnerToList');
-    const partnerListContainer = document.querySelector('.partner-list');
+  const itemInput = document.getElementById('name');
+  const suggestionList = document.createElement('ul');
+  suggestionList.id = 'suggestion';
+  itemInput.parentElement.appendChild(suggestionList);
 
-    if (addPartnerButton && partnerListContainer) {
-      addPartnerButton.addEventListener('click', () => {
-        const selectedPartner = document.getElementById('partnersDropdown').value;
-        const selectedPartnerText = document.getElementById('partnersDropdown').selectedOptions[0].text;
+  itemInput.addEventListener('input', async () => {
+    const query = itemInput.value;
 
-        if (partnerListContainer.children.length > 1) {
-          alert('You can only select one partner');
-          return;
+    if (query.length >= 2) {
+      try {
+        const response = await fetch(`/api/sales/search-items?name=${encodeURIComponent(query)}`, {
+          headers: { 'x-auth-token': token }
+        });
+        const items = await response.json();
+        suggestionList.innerHTML = '';
+
+        if (items.length > 0) {
+          items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.name} ${item.quantity} (${item.unit} in stock)`;
+            li.addEventListener('click', () => {
+              itemInput.value = item.name;
+              document.getElementById('quantity').value = item.quantity;
+              document.getElementById('price').value = item.price;
+              selectedItem = item;
+              suggestionList.innerHTML = '';
+            });
+            suggestionList.appendChild(li);
+          });
+        } else {
+          const li = document.createElement('li');
+          li.textContent = 'No items found';
+          suggestionList.appendChild(li);
+          selectedItem = null;
         }
+      } catch (error) {
+        console.error('Error fetching items:', error);
+      }
+    } else {
+      suggestionList.innerHTML = '';
+      selectedItem = null;
+    }
+  });
 
-        if (!selectedPartner) {
-          alert('Please select a partner');
-          return;
-        }
+  const addPartnerButton = document.getElementById('addPartnerToList');
+  const partnerListContainer = document.querySelector('.partner-list');
 
-        const newPartner = document.createElement('div');
-        newPartner.classList.add('partner-item');
-        newPartner.innerHTML = `
+  if (addPartnerButton && partnerListContainer) {
+    addPartnerButton.addEventListener('click', () => {
+      const selectedPartner = document.getElementById('partnersDropdown').value;
+      const selectedPartnerText = document.getElementById('partnersDropdown').selectedOptions[0].text;
+
+      if (partnerListContainer.children.length > 1) {
+        alert('You can select only one partner');
+        return;
+      }
+
+      if (!selectedPartner) {
+        alert('Please select a partner');
+        return;
+      }
+
+      document.getElementById('partnersDropdown').disabled = true;
+
+      const newPartner = document.createElement('div');
+      newPartner.classList.add('partner-item');
+      newPartner.innerHTML = `
           <p><strong>Name:</strong> ${selectedPartnerText}</p>
         `;
-        partnerListContainer.appendChild(newPartner);
-      });
-    }
-  
-    const salesForm = document.getElementById('addSalesForm');
+      partnerListContainer.appendChild(newPartner);
+    });
+  }
 
-    if (salesForm) {
-      salesForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+  const salesForm = document.getElementById('addSalesForm');
 
-        const selectedPartner = document.getElementById('partnersDropdown').value;
-        if (!selectedPartner) {
-          alert('Please select a partner');
+  if (salesForm) {
+    salesForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const selectedPartner = document.getElementById('partnersDropdown').value;
+      if (!selectedPartner) {
+        alert('Please select a partner');
+        return;
+      }
+
+      const items = [];
+      const itemElements = document.querySelectorAll('.sales-item');
+
+      itemElements.forEach((item) => {
+        const itemNameElement = item.querySelector('p:nth-child(1)');
+        const itemQuantityElement = item.querySelector('p:nth-child(2)');
+        const itemPriceElement = item.querySelector('p:nth-child(3)');
+
+        const itemName = itemNameElement.textContent.replace('Name:', '').trim();
+        const itemQuantity = itemQuantityElement.textContent.replace('Quantity:', '').trim();
+        const itemPrice = itemPriceElement.textContent.replace('Price:', '').trim();
+
+        if (!itemName || !itemQuantity || !itemPrice) {
+          alert('One or more fields are missing in the added items.');
           return;
         }
 
-        const items = [];
-        const itemElements = document.querySelectorAll('.sales-item');
+        items.push({
+          itemName,
+          itemQuantity: Number(itemQuantity),
+          itemPrice: Number(itemPrice)
+        });
+      });
 
-        itemElements.forEach((item) => {
-          const itemNameElement = item.querySelector('p:nth-child(1)');
-          const itemQuantityelement = item.querySelector('p:nth-child(2)');
-          const itemPriceElement = item.querySelector('p:nth-child(3)');
+      if (items.length === 0) {
+        alert('Please add at least one item');
+        return;
+      }
 
-          const itemName = itemNameElement.textContent.replace('Name:', '').trim();
-          const itemQuantity = itemQuantityelement.textContent.replace('Quantity:', '').trim();
-          const itemPrice = itemPriceElement.textContent.replace('Price:', '').trim();
+      const saleData = { partnerId: selectedPartner, items };
 
-          if (!itemName || !itemQuantity || !itemPrice) {
-            alert('One or more fields are missing in the added items.');
-            return;
-          }
-
-          items.push({
-            itemName,
-            itemQuantity: Number(itemQuantity),
-            itemPrice: Number(itemPrice)
-          });
+      try {
+        const response = await fetch('/api/sales', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+          body: JSON.stringify(saleData)
         });
 
-        if (items.length === 0) {
-          alert('Please add at least one item');
+        if (!response.ok) {
+          const errorResponse = await response.json();
+          alert(`Error: ${errorResponse.msg}`);
           return;
         }
 
-        const saleData = { partnerId: selectedPartner, items };
+        alert('Sale added successfully');
+        salesForm.reset();
+        salesItemContainer.innerHTML = '';
+        partnerListContainer.innerHTML = '';
+      } catch (error) {
+        console.error('Error adding sale:', error);
+      }
+    });
+  }
 
-        try {
-          const response = await fetch('/api/sales', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-            body: JSON.stringify(saleData)
-          });
-
-          if (!response.ok) {
-            const errorResponse = await response.json();
-            alert(`Error: ${errorResponse.msg}`);
-            return;
-          }
-
-          alert('Sale added successfully');
-          salesForm.reset();
-          salesItemContainer.innerHTML = '';
-          partnerListContainer.innerHTML = '';
-        } catch (error) {
-          console.error('Error adding sale:', error);
-          alert('An error occurred while adding the sale');
-        }
-      });
-    }
-
-    fetchItems();
-    fetchPartners();
+  fetchItems();
+  fetchPartners();
   });
-  
+
   function clearSalesItems() {
     const salesItemsList = document.querySelector('.sales-items-list');
     salesItemsList.innerHTML = '';
   }
 
-  function getPurchaseQuantity(itemName) {
-    const purchases = document.querySelectorAll('.purchase-item');
-    let purchaseQuantity = 0;
-    purchases.forEach((purchase) => {
-      const purchaseItemName = purchase.querySelector('#name').value;
-      if (purchaseItemName === itemName) {
-        purchaseQuantity += Number(purchase.querySelector('#quantity').value);
-      }
-    });
-    return totalQuantity;
-  }
+  document.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('token');
 
-  function clearSalesItems() {
-    const salesItemsList = document.querySelector('sales-items-list');
-    salesItemsList.innerHTML = '';
-  }
-
-  const purchaseForm = document.getElementById('addPurchaseForm');
-  const addPurchaseItemButton = document.getElementById('addPurchaseItem');
-
-  if (purchaseForm) {
-    purchaseForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const purchaseName = document.getElementById('purchaseName').value;
-      const purchaseBulstat = document.getElementById('purchaseBulstat').value;
-      const purchaseAddress = document.getElementById('purchaseAddress').value;
-      const purchaseEmail = document.getElementById('purchaseEmail').value;
-      const purchasePhone = document.getElementById('purchasePhone').value;
-
-      const items = Array.from(document.querySelectorAll('.purchase-item')).map((item) => ({
-        itemName: item.querySelector('#name').value,
-        itemQuantity: item.querySelector('#quantity').value,
-        itemPrice: item.querySelector('#price').value
-      }));
-
-      const purchaseData = { purchaseName, purchaseBulstat, purchaseAddress, purchaseEmail, purchasePhone, items };
-
+    const fetchPartners = async () => {
       try {
-        const response = await fetch('/api/purchase', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-          body: JSON.stringify(purchaseData)
+        const response = await fetch('/api/partners', {
+          headers: { 'x-auth-token': token }
         });
-        console.log('Response status:', response.status);
-        console.log('Response data:', await response.json());
-
-        if (response.ok) {
-          console.log('Purchase added successfully');
-          purchaseForm.reset();
-        } else {
-          const errorResponse = await response.json();
-          console.error('Error adding purchase:', errorResponse);
-          alert('Error adding purchase:', errorResponse);
+        const partners = await response.json();
+        const purchasePartnersDropdown = document.getElementById('purchasePartnersDropdown');
+  
+        if (purchasePartnersDropdown) {
+          purchasePartnersDropdown.innerHTML = '<option value="">-- Избери доставчик --</option>';
+          partners.forEach((partner) => {
+            const option = document.createElement('option');
+            option.value = partner._id;
+            option.textContent = `${partner.name}`;
+            purchasePartnersDropdown.appendChild(option);
+          });
         }
       } catch (error) {
-        console.error('Error adding purchase:', error);
+        console.error('Error fetching partners:', error);
       }
-    });
-  }
+    };
 
-  if (addPurchaseItemButton) {
-    addPurchaseItemButton.addEventListener('click', () => {
-      const itemName = document.querySelector('#name').value;
-      const itemQuantity = document.querySelector('#quantity').value;
-      const itemPrice = document.querySelector('#price').value;
+    fetchPartners();
 
-      if (itemName && itemQuantity && itemPrice) {
-        const purchaseItemContainer = document.getElementById('purchaseItem');
-        const newItemDiv = document.createElement('div');
-        newItemDiv.classList.add('purchase-item');
+    const addPurchasePartnerButton = document.getElementById('addPurchasePartnerToList');
+    const supplierListContainer = document.querySelector('.supplier-list');
+  
+    if (addPurchasePartnerButton && supplierListContainer) {
+      addPurchasePartnerButton.addEventListener('click', () => {
+        const selectedSupplier = document.getElementById('purchasePartnersDropdown').value;
+        const selectedSupplierText = document.getElementById('purchasePartnersDropdown').selectedOptions[0].text;
+  
+        if (!selectedSupplier) {
+          alert('Please select a supplier');
+          return;
+        }
+  
+        const existingSuppliers = supplierListContainer.querySelectorAll('.supplier-item');
+        if (existingSuppliers.length > 0) {
+          alert('You can select only one supplier');
+          return;
+        }
 
-        newItemDiv.innerHTML = `
-        <input type="text" id="name" value="${itemName}" readonly>
-        <input type="number" id="quantity" value="${itemQuantity}" readonly>
-        <input type="number" id="price" value="${itemPrice}" readonly>
-      `;
+        const newSupplier = document.createElement('div');
+        newSupplier.classList.add('supplier-item');
+        newSupplier.innerHTML = `<p><strong>Име на доставчик:</strong> ${selectedSupplierText}</p>`;
+        supplierListContainer.appendChild(newSupplier);
 
-        purchaseItemContainer.appendChild(newItemDiv);
-
-        document.querySelector('#name').value = '';
-        document.querySelector('#quantity').value = '';
-        document.querySelector('#price').value = '';
+        document.getElementById('purchasePartnersDropdown').disabled = true;
+      });
+    }
+  
+    const purchaseItemInput = document.getElementById('purchaseItemName');
+    const purchaseSuggestionList = document.createElement('ul');
+    purchaseSuggestionList.id = 'purchaseSuggestion';
+    purchaseItemInput.parentElement.appendChild(purchaseSuggestionList);
+  
+    purchaseItemInput.addEventListener('input', async () => {
+      const query = purchaseItemInput.value;
+  
+      if (query.length >= 2) {
+        try {
+          const response = await fetch(`/api/purchase/search-items?name=${encodeURIComponent(query)}`);
+  
+          if (!response.ok) {
+            throw new Error('Грешка при търсене на артикули');
+          }
+  
+          const items = await response.json();
+          purchaseSuggestionList.innerHTML = '';
+  
+          if (items.length > 0) {
+            items.forEach((item) => {
+              const li = document.createElement('li');
+              li.textContent = `${item.name} (${item.quantity} налични)`;
+              li.addEventListener('click', () => {
+                purchaseItemInput.value = item.name;
+                document.getElementById('purchaseItemQuantity').value = item.quantity;
+                document.getElementById('purchaseItemPrice').value = item.price;
+                purchaseSuggestionList.innerHTML = '';
+              });
+              purchaseSuggestionList.appendChild(li);
+            });
+          } else {
+            const li = document.createElement('li');
+            li.textContent = 'Няма намерени артикули';
+            purchaseSuggestionList.appendChild(li);
+          }
+        } catch (error) {
+          console.error('Грешка при извличане на артикули:', error);
+        }
       } else {
-        alert('Please fill in all fields');
+        purchaseSuggestionList.innerHTML = '';
       }
     });
-  }
+  
+    const addPurchaseItemButton = document.getElementById('addPurchaseItem');
+    const purchaseItemsList = document.querySelector('.purchase-items-list');
+
+    document.getElementById('addPurchaseItem').addEventListener('click', () => {
+      const itemName = document.getElementById('purchaseItemName').value.trim();
+      const itemQuantity = document.getElementById('purchaseItemQuantity').value.trim();
+      const itemPrice = document.getElementById('purchaseItemPrice').value.trim();
+
+      if (!itemName || !itemQuantity || !itemPrice) {
+        alert('Моля, попълнете всички полета');
+        return;
+      }
+
+      const newItem = document.createElement('div');
+      newItem.classList.add('purchase-item');
+      newItem.innerHTML = `
+        <p class="item-name"><strong>Име:</strong> ${itemName}</p>
+        <p class="item-quantity"><strong>Количество:</strong> ${itemQuantity}</p>
+        <p class="item-price"><strong>Цена:</strong> ${itemPrice}</p>
+      `;
+      purchaseItemsList.appendChild(newItem);
+
+      document.querySelector('.purchase-items-list').appendChild(newItem);
+
+      document.getElementById('purchaseItemName').value = '';
+      document.getElementById('purchaseItemQuantity').value = '';
+      document.getElementById('purchaseItemPrice').value = '';
+    });
+
+    addPurchaseForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+    
+      const selectedSupplier = document.getElementById('purchasePartnersDropdown').value;
+      if (!selectedSupplier) {
+        alert('Please select a supplier');
+        return;
+      }
+    
+      const items = [];
+      const itemElements = document.querySelectorAll('.purchase-item');
+    
+      if (itemElements.length === 0) {
+        alert('Please add at least one item');
+        return;
+      }
+
+    itemElements.forEach((item) => {
+      const itemNameElement = item.querySelector('.item-name');
+      const itemQuantityElement = item.querySelector('.item-quantity');
+      const itemPriceElement = item.querySelector('.item-price');
+      
+      console.log("Item:", { itemNameElement, itemQuantityElement, itemPriceElement });
+
+      if (!itemNameElement || !itemQuantityElement || !itemPriceElement) {
+        alert('Missing item details');
+        return;
+      }
+
+      const itemName = itemNameElement.innerText.replace('Name:', '').trim();
+      const itemQuantity = itemQuantityElement.innerText.replace('Qantity:', '').trim();
+      const itemPrice = itemPriceElement.innerText.replace('Price:', '').trim();
+
+      if (!itemName || !itemQuantity || !itemPrice || Number(itemQuantity) <= 0 || Number(itemPrice) <= 0) {
+        console.log("Invalid item details", { itemName, itemQuantity, itemPrice });
+        return;
+      }
+
+      items.push({
+        itemName: itemName,
+        itemQuantity: Number(itemQuantity),
+        itemPrice: Number(itemPrice),
+      });
+    });
+
+    const purchaseData = { partnerId: selectedSupplier, items };
+    console.log('Purchase data:', items);
+
+    try {
+      const response = await fetch('/api/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(purchaseData),
+        
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        alert(`Error: ${errorText}`);
+        return;
+      }  
+
+      alert('Purchase added successfully');
+      addPurchaseForm.reset();
+      purchaseItemsList.innerHTML = '';
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
+});      
